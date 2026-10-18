@@ -85,32 +85,9 @@ server/
 | Menu links | `client/src/components/Navbar.jsx` |
 | Pages and URLs | `client/src/App.jsx` |
 
-## Progress
-
-- [x] Milestone 1: accounts, pen names, roles, helper applications, admin approval
-- [x] Milestone 2: community, check-ins, mood tracker, journal
-- [x] Milestone 3: helper directory, matching, encrypted chat
-- [x] Milestone 4: dashboard, resources, AI chatbot, demo data
-
 ## How the encrypted chat works
 
 1. On sign-up the browser makes an ECDH key pair. The public key goes to the server. The private key stays in the browser, and a copy locked with the user's password is stored on the server so the user can log in on another device.
 2. Both people in a chat combine their own private key with the other person's public key and get the same AES key. That key is never sent anywhere.
 3. Messages are encrypted in the browser before sending. The `messages` table only holds `ciphertext` and `iv`.
 4. New messages are fetched every 3 seconds.
-
-## Deploying (free)
-
-1. **Database:** create one shared Neon project and run `npm run db:setup` (and `db:demo` if you want) against its `DATABASE_URL`.
-2. **Backend on Render:** New → Web Service → this repo. Root directory `server`, build command `npm install`, start command `npm start`. Add the environment variables `DATABASE_URL`, `JWT_SECRET`, `GEMINI_API_KEY` and `CLIENT_URL` (the Vercel address from step 3).
-3. **Frontend on Vercel:** New Project → this repo. Root directory `client`, framework Vite. Add `VITE_API_URL` = your Render address + `/api`, e.g. `https://calmconnect.onrender.com/api`.
-
-Render's free plan sleeps when idle, so the first request after a while takes about 30 seconds.
-
-## Rules for writing code
-
-- Take the user's id from `req.user.id`, never from the request body.
-- Use `$1, $2` placeholders in SQL. Never build SQL by joining strings.
-- Every personal query filters by `user_id`.
-- Never send `password_hash` to the browser.
-- Never commit `.env`.
