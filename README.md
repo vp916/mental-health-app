@@ -36,6 +36,7 @@ Admin login: `ADMIN_EMAIL` / `ADMIN_PASSWORD` from `.env` (default `admin@calmco
 ```
 client/src/
   api/axios.js            every API call goes through this
+  crypto.js               all chat encryption (Web Crypto API)
   context/AuthContext.jsx logged-in user
   components/             Navbar, Footer, Layout, ProtectedRoute, shared pieces
   pages/                  one file per page, admin pages in pages/admin/
@@ -66,8 +67,15 @@ server/
 
 - [x] Milestone 1: accounts, pen names, roles, helper applications, admin approval
 - [x] Milestone 2: community, check-ins, mood tracker, journal
-- [ ] Milestone 3: helper directory, matching, encrypted chat
+- [x] Milestone 3: helper directory, matching, encrypted chat
 - [ ] Milestone 4: dashboard, resources, AI chatbot, demo data
+
+## How the encrypted chat works
+
+1. On sign-up the browser makes an ECDH key pair. The public key goes to the server. The private key stays in the browser, and a copy locked with the user's password is stored on the server so the user can log in on another device.
+2. Both people in a chat combine their own private key with the other person's public key and get the same AES key. That key is never sent anywhere.
+3. Messages are encrypted in the browser before sending. The `messages` table only holds `ciphertext` and `iv`.
+4. New messages are fetched every 3 seconds.
 
 ## Rules for writing code
 

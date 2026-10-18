@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import { useAuth, homePath } from "../context/AuthContext.jsx";
+import { setupKeys } from "../crypto.js";
 
 export default function Login() {
   const { login } = useAuth();
@@ -22,6 +23,7 @@ export default function Login() {
     try {
       const { data } = await api.post("/auth/login", form);
       login(data.token, data.user);
+      await setupKeys(form.password);
       navigate(homePath(data.user));
     } catch (err) {
       setError(errorMessage(err));

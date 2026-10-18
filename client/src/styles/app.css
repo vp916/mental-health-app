@@ -127,6 +127,10 @@ h1, h2, h3, h4,
   color: var(--cc-sage);
 }
 
+.cc-nav .nav-link {
+  white-space: nowrap;
+}
+
 .cc-nav .nav-link.active {
   color: var(--cc-sage);
   font-weight: 700;
@@ -262,6 +266,40 @@ h1, h2, h3, h4,
 .cc-choice.is-selected {
   border-color: var(--cc-sage);
   background: var(--cc-sage-soft);
+}
+
+/* ---------- Chat ---------- */
+.cc-chat {
+  height: 26rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-line);
+  border-radius: var(--cc-radius);
+}
+
+.cc-message {
+  display: flex;
+  align-items: flex-start;
+  align-self: flex-start;
+  max-width: 80%;
+  padding: 0.55rem 0.85rem;
+  border-radius: 1rem;
+  background: var(--cc-paper);
+}
+
+.cc-message.is-mine {
+  align-self: flex-end;
+  background: var(--cc-sage-soft);
+}
+
+.cc-message-time {
+  font-size: 0.75rem;
+  color: var(--cc-muted);
+  margin-top: 0.15rem;
 }
 
 /* ---------- Shared bits ---------- */

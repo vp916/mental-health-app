@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { lockPrivateKey } from "../crypto.js";
 
 const statusText = {
   pending: "Your helper application is waiting for an admin to review it.",
@@ -30,7 +31,9 @@ export default function Profile() {
     setMessage("");
     setError("");
     try {
-      const { data } = await api.put("/auth/password", form);
+      const privateKey = localStorage.getItem("privateKey");
+      const encrypted_private_key = privateKey ? await lockPrivateKey(privateKey, form.newPassword) : null;
+      const { data } = await api.put("/auth/password", { ...form, encrypted_private_key });
       setMessage(data.message);
       setForm({ currentPassword: "", newPassword: "" });
     } catch (err) {

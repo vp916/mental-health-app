@@ -11,6 +11,8 @@ const publicLinks = [
 const userLinks = [
   { to: "/dashboard", label: "Today" },
   { to: "/community", label: "Community" },
+  { to: "/helpers", label: "Find a helper" },
+  { to: "/chats", label: "Chats" },
   { to: "/mood", label: "Mood" },
   { to: "/journal", label: "Journal" },
   { to: "/assessments", label: "Check-ins" },
@@ -27,7 +29,6 @@ export default function Navbar() {
   let links = publicLinks;
   if (user?.role === "admin") links = adminLinks;
   else if (user) links = userLinks;
-  if (user?.role === "user" && !user.helper_status) links = [...links, { to: "/helper/apply", label: "Become a helper" }];
 
   function handleLogout() {
     logout();
@@ -35,7 +36,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg cc-nav">
+    <nav className="navbar navbar-expand-xl cc-nav">
       <div className="container">
         <Link to={user ? homePath(user) : "/"} className="navbar-brand cc-brand">
           CalmConnect

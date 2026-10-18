@@ -1,8 +1,8 @@
 import { useState } from "react";
 import api, { errorMessage } from "../api/axios.js";
 
-export default function ReportButton({ target }) {
-  const [open, setOpen] = useState(false);
+export default function ReportButton({ target, startOpen = false }) {
+  const [open, setOpen] = useState(startOpen);
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");

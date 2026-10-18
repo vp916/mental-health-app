@@ -46,6 +46,11 @@ export default function AssessmentTake() {
           <div className="text-secondary small mb-3">Score {result.score}</div>
           <p className="mb-0">{result.tip}</p>
         </div>
+        {["Moderate", "High"].includes(result.level) && (
+          <p className="mb-4">
+            <Link to="/helpers">See helpers who can support you with this</Link>
+          </p>
+        )}
         {result.level === "High" && (
           <div className="cc-helpline mb-4">
             Please talk to someone soon. Tele-MANAS is free and open all day: call <strong>14416</strong>.{" "}

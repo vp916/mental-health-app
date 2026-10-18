@@ -18,6 +18,10 @@ import AssessmentTake from "./pages/AssessmentTake.jsx";
 import Community from "./pages/Community.jsx";
 import PostDetail from "./pages/PostDetail.jsx";
 import NewPost from "./pages/NewPost.jsx";
+import Helpers from "./pages/Helpers.jsx";
+import HelperProfile from "./pages/HelperProfile.jsx";
+import Chats from "./pages/Chats.jsx";
+import Chat from "./pages/Chat.jsx";
 import Profile from "./pages/Profile.jsx";
 import HelperApply from "./pages/HelperApply.jsx";
 import NotFound from "./pages/NotFound.jsx";
@@ -50,6 +54,10 @@ export default function App() {
           <Route path="/community" element={<Community />} />
           <Route path="/community/new" element={<NewPost />} />
           <Route path="/community/:id" element={<PostDetail />} />
+          <Route path="/helpers" element={<Helpers />} />
+          <Route path="/helpers/:id" element={<HelperProfile />} />
+          <Route path="/chats" element={<Chats />} />
+          <Route path="/chats/:id" element={<Chat />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 
