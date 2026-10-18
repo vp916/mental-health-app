@@ -91,9 +91,34 @@ router.get("/me", requireAuth, async (req, res, next) => {
   }
 });
 
+router.get("/keys", requireAuth, async (req, res, next) => {
+  try {
+    const { rows } = await query("SELECT public_key, encrypted_private_key FROM users WHERE id = $1", [req.user.id]);
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put("/keys", requireAuth, async (req, res, next) => {
+  try {
+    const { public_key, encrypted_private_key } = req.body;
+    if (!public_key || !encrypted_private_key) {
+      return res.status(400).json({ message: "Both keys are required." });
+    }
+    await query(
+      "UPDATE users SET public_key = $1, encrypted_private_key = $2 WHERE id = $3",
+      [public_key, encrypted_private_key, req.user.id]
+    );
+    res.json({ message: "Keys saved." });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.put("/password", requireAuth, async (req, res, next) => {
   try {
-    const { currentPassword, newPassword } = req.body;
+    const { currentPassword, newPassword, encrypted_private_key } = req.body;
     if (!newPassword || newPassword.length < 6) {
       return res.status(400).json({ message: "New password must be at least 6 characters." });
     }
@@ -104,7 +129,10 @@ router.put("/password", requireAuth, async (req, res, next) => {
     }
 
     const passwordHash = await bcrypt.hash(newPassword, 10);
-    await query("UPDATE users SET password_hash = $1 WHERE id = $2", [passwordHash, req.user.id]);
+    await query(
+      "UPDATE users SET password_hash = $1, encrypted_private_key = COALESCE($2, encrypted_private_key) WHERE id = $3",
+      [passwordHash, encrypted_private_key || null, req.user.id]
+    );
     res.json({ message: "Password changed." });
   } catch (err) {
     next(err);

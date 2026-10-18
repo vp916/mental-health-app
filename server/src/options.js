@@ -14,7 +14,7 @@ const options = {
     "hurt myself", "no reason to live", "better off dead", "cut myself",
   ],
 
-  specialisations: ["Anxiety", "Depression", "Exam stress", "Relationships", "Family", "Grief", "Loneliness", "Sleep"],
+  specialisations: ["Anxiety", "Stress", "Depression", "Exam stress", "Relationships", "Family", "Grief", "Loneliness", "Sleep"],
   languages: ["English", "Hindi", "Gujarati", "Marathi", "Tamil", "Telugu", "Bengali"],
   genders: ["Female", "Male", "Non-binary", "Prefer not to say"],
   helperKinds: [
@@ -30,6 +30,7 @@ const options = {
     GAD7: {
       name: "Anxiety check-in",
       source: "GAD-7",
+      suggests: "Anxiety",
       intro: "Over the last 2 weeks, how often have you been bothered by the following?",
       choices: ["Not at all", "Several days", "More than half the days", "Nearly every day"],
       questions: [
@@ -52,6 +53,7 @@ const options = {
     PSS10: {
       name: "Stress check-in",
       source: "PSS-10",
+      suggests: "Stress",
       intro: "In the last month, how often have you...",
       choices: ["Never", "Almost never", "Sometimes", "Fairly often", "Very often"],
       questions: [
