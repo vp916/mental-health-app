@@ -12,6 +12,9 @@ import assessmentRoutes from "./routes/assessments.js";
 import moodRoutes from "./routes/mood.js";
 import journalRoutes from "./routes/journal.js";
 import resourceRoutes from "./routes/resources.js";
+import bookmarkRoutes from "./routes/bookmarks.js";
+import affirmationRoutes from "./routes/affirmations.js";
+import aiRoutes from "./routes/ai.js";
 import adminRoutes from "./routes/admin.js";
 
 const app = express();
@@ -31,6 +34,9 @@ app.use("/api/assessments", assessmentRoutes);
 app.use("/api/mood", moodRoutes);
 app.use("/api/journal", journalRoutes);
 app.use("/api/resources", resourceRoutes);
+app.use("/api/bookmarks", bookmarkRoutes);
+app.use("/api/affirmations", affirmationRoutes);
+app.use("/api/ai", aiRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use("/api", (req, res) => res.status(404).json({ message: "Route not found." }));

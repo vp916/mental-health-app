@@ -6,6 +6,24 @@ const router = Router();
 
 router.use(requireAuth, requireAdmin);
 
+router.get("/stats", async (req, res, next) => {
+  try {
+    const { rows } = await query(
+      `SELECT
+         (SELECT COUNT(*) FROM users WHERE role <> 'admin')::int AS users,
+         (SELECT COUNT(*) FROM helper_profiles WHERE status = 'approved')::int AS helpers,
+         (SELECT COUNT(*) FROM helper_profiles WHERE status = 'pending')::int AS pending_helpers,
+         (SELECT COUNT(*) FROM reports WHERE status = 'open')::int AS open_reports,
+         (SELECT COUNT(*) FROM posts WHERE created_at > NOW() - INTERVAL '7 days')::int AS posts_this_week,
+         (SELECT COUNT(*) FROM mood_entries WHERE entry_date > CURRENT_DATE - 7)::int AS mood_entries_this_week,
+         (SELECT COUNT(*) FROM chats)::int AS chats`
+    );
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get("/users", async (req, res, next) => {
   try {
     const { rows } = await query(
