@@ -57,4 +57,46 @@ router.patch("/helpers/:userId", async (req, res, next) => {
   }
 });
 
+router.get("/reports", async (req, res, next) => {
+  try {
+    const { rows } = await query(
+      `SELECT r.id, r.reason, r.evidence, r.created_at, r.post_id, r.comment_id, r.chat_id,
+              reporter.pen_name AS reporter,
+              p.title AS post_title, p.body AS post_body,
+              c.body AS comment_body, c.post_id AS comment_post_id
+       FROM reports r
+       JOIN users reporter ON reporter.id = r.reporter_id
+       LEFT JOIN posts p ON p.id = r.post_id
+       LEFT JOIN comments c ON c.id = r.comment_id
+       WHERE r.status = 'open'
+       ORDER BY r.created_at`
+    );
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch("/reports/:id", async (req, res, next) => {
+  try {
+    const { rows } = await query(
+      "UPDATE reports SET status = 'resolved' WHERE id = $1 RETURNING post_id, comment_id",
+      [req.params.id]
+    );
+    const report = rows[0];
+    if (!report) return res.status(404).json({ message: "Report not found." });
+
+    if (req.body.hide && report.post_id) {
+      await query("UPDATE posts SET is_hidden = TRUE WHERE id = $1", [report.post_id]);
+    }
+    if (req.body.hide && report.comment_id) {
+      await query("UPDATE comments SET is_hidden = TRUE WHERE id = $1", [report.comment_id]);
+    }
+
+    res.json({ message: "Report resolved." });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

@@ -5,6 +5,11 @@ import "dotenv/config";
 import options from "./options.js";
 import authRoutes from "./routes/auth.js";
 import helperRoutes from "./routes/helpers.js";
+import postRoutes from "./routes/posts.js";
+import reportRoutes from "./routes/reports.js";
+import assessmentRoutes from "./routes/assessments.js";
+import moodRoutes from "./routes/mood.js";
+import journalRoutes from "./routes/journal.js";
 import resourceRoutes from "./routes/resources.js";
 import adminRoutes from "./routes/admin.js";
 
@@ -18,6 +23,11 @@ app.get("/api/options", (req, res) => res.json(options));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/helpers", helperRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/assessments", assessmentRoutes);
+app.use("/api/mood", moodRoutes);
+app.use("/api/journal", journalRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/api/admin", adminRoutes);
 
