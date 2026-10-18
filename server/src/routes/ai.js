@@ -25,7 +25,7 @@ router.post("/chat", requireAuth, async (req, res, next) => {
       return res.status(503).json({ message: "The AI assistant isn't set up yet. Add GEMINI_API_KEY to server/.env." });
     }
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
