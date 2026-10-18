@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 
-// Box breathing: 4 seconds each for in, hold, out, hold.
 const SECONDS_PER_STEP = 4;
-// The circle's growing and shrinking is a CSS animation (see .cc-breath-circle in app.css)
-// that runs on the same 16-second cycle as these labels.
 const steps = ["Breathe in", "Hold", "Breathe out", "Hold"];
 
 export default function BreathingCircle() {
-  // Seconds since the exercise started. Everything else is worked out from this.
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {

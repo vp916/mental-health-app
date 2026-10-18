@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth, homePath } from "../context/AuthContext.jsx";
 
 export default function Login() {
   const { login } = useAuth();
@@ -22,7 +22,7 @@ export default function Login() {
     try {
       const { data } = await api.post("/auth/login", form);
       login(data.token, data.user);
-      navigate("/dashboard");
+      navigate(homePath(data.user));
     } catch (err) {
       setError(errorMessage(err));
     } finally {

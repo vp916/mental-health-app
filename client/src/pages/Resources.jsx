@@ -1,24 +1,23 @@
-// Owner: Person C
-// This page is the worked example for loading data: copy its pattern (loading / error / list) for other pages.
-// TODO: bookmark button for logged-in users.
 import { useEffect, useState } from "react";
 import api, { errorMessage } from "../api/axios.js";
 
-const categories = ["all", "stress", "anxiety", "sleep", "mindfulness", "students"];
-
 export default function Resources() {
+  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState("");
   const [resources, setResources] = useState([]);
-  const [category, setCategory] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    api.get("/options").then(({ data }) => setCategories(data.resourceCategories));
+  }, []);
 
   useEffect(() => {
     async function load() {
       setLoading(true);
       setError("");
       try {
-        const params = category === "all" ? {} : { category };
-        const { data } = await api.get("/resources", { params });
+        const { data } = await api.get("/resources", { params: category ? { category } : {} });
         setResources(data);
       } catch (err) {
         setError(errorMessage(err));
@@ -34,13 +33,13 @@ export default function Resources() {
       <h1 className="h2 mb-4">Resources</h1>
 
       <div className="d-flex flex-wrap gap-2 mb-4">
-        {categories.map((c) => (
+        {["", ...categories].map((c) => (
           <button
-            key={c}
+            key={c || "all"}
             className={`btn btn-sm ${c === category ? "btn-primary" : "btn-outline-primary"}`}
             onClick={() => setCategory(c)}
           >
-            {c[0].toUpperCase() + c.slice(1)}
+            {c || "All"}
           </button>
         ))}
       </div>
@@ -54,8 +53,8 @@ export default function Resources() {
       <div className="d-grid gap-3" style={{ maxWidth: "46rem" }}>
         {resources.map((r) => (
           <article className="cc-panel" key={r.id}>
-            <div className="small text-secondary mb-1">
-              {r.type} in {r.category}
+            <div className="small text-secondary mb-1 text-capitalize">
+              {r.type} · {r.category}
             </div>
             <h2 className="h5 mb-2">
               {r.url ? (

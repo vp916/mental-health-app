@@ -1,17 +1,17 @@
 import { Link, Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth, homePath } from "../context/AuthContext.jsx";
 import BreathingCircle from "../components/BreathingCircle.jsx";
 
 const features = [
   { title: "Log how today felt", text: "Rate your mood, stress and sleep in under a minute. See how the week went." },
   { title: "Write it down", text: "A private journal only you can read. Tag entries by feeling and search them later." },
   { title: "Check in on stress and anxiety", text: "Short, well-known questionnaires that show where you are right now." },
-  { title: "Talk to people who get it", text: "Share and reply in the community, with your name or anonymously." },
+  { title: "Talk to people who get it", text: "Share and reply under a pen name. No likes, no downvotes, just support." },
 ];
 
 export default function Home() {
   const { user } = useAuth();
-  if (user) return <Navigate to="/dashboard" replace />;
+  if (user) return <Navigate to={homePath(user)} replace />;
 
   return (
     <>

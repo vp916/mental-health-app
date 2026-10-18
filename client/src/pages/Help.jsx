@@ -1,4 +1,3 @@
-// Check every number again before the final demo.
 const helplines = [
   { name: "Tele-MANAS (Government of India)", number: "14416 or 1-800-891-4416", note: "Free, 24 hours, many Indian languages" },
   { name: "Emergency services", number: "112", note: "If you or someone else is in immediate danger" },

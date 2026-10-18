@@ -1,5 +1,3 @@
-// Temporary stand-in for pages that aren't built yet.
-// Delete it from a page once you start building that page.
 export default function Placeholder({ title, owner, todo = [] }) {
   return (
     <div className="container py-5">

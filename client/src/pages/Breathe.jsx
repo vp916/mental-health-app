@@ -1,4 +1,3 @@
-// Owner: Person C. Ideas: start/stop button, choose 1, 3 or 5 minutes, other patterns (4-7-8).
 import BreathingCircle from "../components/BreathingCircle.jsx";
 
 export default function Breathe() {

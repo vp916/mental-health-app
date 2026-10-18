@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth, homePath } from "../context/AuthContext.jsx";
 
 const publicLinks = [
   { to: "/resources", label: "Resources" },
@@ -10,19 +10,23 @@ const publicLinks = [
 
 const userLinks = [
   { to: "/dashboard", label: "Today" },
+  { to: "/community", label: "Community" },
   { to: "/mood", label: "Mood" },
   { to: "/journal", label: "Journal" },
   { to: "/assessments", label: "Check-ins" },
   { to: "/resources", label: "Resources" },
-  { to: "/community", label: "Community" },
 ];
+
+const adminLinks = [{ to: "/admin", label: "Admin" }];
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const links = user ? userLinks : publicLinks;
+  let links = publicLinks;
+  if (user?.role === "admin") links = adminLinks;
+  else if (user) links = userLinks;
 
   function handleLogout() {
     logout();
@@ -32,7 +36,7 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg cc-nav">
       <div className="container">
-        <Link to={user ? "/dashboard" : "/"} className="navbar-brand cc-brand">
+        <Link to={user ? homePath(user) : "/"} className="navbar-brand cc-brand">
           CalmConnect
         </Link>
 
@@ -55,20 +59,13 @@ export default function Navbar() {
                 </NavLink>
               </li>
             ))}
-            {user?.role === "admin" && (
-              <li className="nav-item">
-                <NavLink to="/admin" className="nav-link">
-                  Admin
-                </NavLink>
-              </li>
-            )}
           </ul>
 
           <div className="d-flex align-items-center gap-2">
             {user ? (
               <>
                 <NavLink to="/profile" className="nav-link">
-                  {user.name}
+                  {user.pen_name}
                 </NavLink>
                 <button className="btn btn-outline-secondary btn-sm" onClick={handleLogout}>
                   Log out

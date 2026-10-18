@@ -1,19 +1,15 @@
-/* CalmConnect styles
-   Bootstrap does most of the work. This file sets our colours and fonts,
-   then adds a few custom pieces (prefixed cc-) that Bootstrap doesn't have. */
-
 /* ---------- Colours and fonts ---------- */
 :root {
-  --cc-paper: #f4f8f7;      /* page background: light mist */
-  --cc-surface: #ffffff;    /* forms, panels */
-  --cc-ink: #2b3a38;        /* text */
-  --cc-muted: #61716d;      /* secondary text */
-  --cc-line: #e1ebe8;       /* borders */
-  --cc-sage: #43806f;       /* main colour: buttons, links */
-  --cc-sage-dark: #386b5d;  /* hover */
-  --cc-sage-soft: #e4f0ec;  /* light sage tint */
-  --cc-sky-soft: #e6f0f7;   /* light sky tint */
-  --cc-marigold: #e0a23f;   /* used rarely: streaks, today */
+  --cc-paper: #f4f8f7;
+  --cc-surface: #ffffff;
+  --cc-ink: #2b3a38;
+  --cc-muted: #61716d;
+  --cc-line: #e1ebe8;
+  --cc-sage: #43806f;
+  --cc-sage-dark: #386b5d;
+  --cc-sage-soft: #e4f0ec;
+  --cc-sky-soft: #e6f0f7;
+  --cc-marigold: #e0a23f;
 
   --cc-radius: 0.875rem;
   --cc-shadow: 0 1px 2px rgba(43, 58, 56, 0.04), 0 8px 24px rgba(43, 58, 56, 0.06);
@@ -21,7 +17,6 @@
   --cc-font-heading: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
   --cc-font-body: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Feed our colours into Bootstrap */
   --bs-body-bg: var(--cc-paper);
   --bs-body-color: var(--cc-ink);
   --bs-body-font-family: var(--cc-font-body);
@@ -32,7 +27,10 @@
   --bs-border-radius: 0.625rem;
   --bs-link-color-rgb: 67, 128, 111;
   --bs-link-hover-color-rgb: 56, 107, 93;
+  --bs-primary: var(--cc-sage);
   --bs-primary-rgb: 67, 128, 111;
+  --bs-link-color: var(--cc-sage);
+  --bs-link-hover-color: var(--cc-sage-dark);
 }
 
 h1, h2, h3, h4,
@@ -69,8 +67,8 @@ h1, h2, h3, h4,
   --bs-btn-hover-color: var(--cc-sage-dark);
   --bs-btn-hover-bg: var(--cc-sage-soft);
   --bs-btn-hover-border-color: #b9d3cb;
-  --bs-btn-active-color: var(--cc-sage-dark);
-  --bs-btn-active-bg: var(--cc-sage-soft);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--cc-sage);
   --bs-btn-active-border-color: var(--cc-sage);
 }
 
@@ -85,6 +83,35 @@ h1, h2, h3, h4,
 .btn:focus-visible {
   border-color: var(--cc-sage);
   box-shadow: 0 0 0 0.25rem rgba(67, 128, 111, 0.18);
+}
+
+.form-check-input:checked {
+  background-color: var(--cc-sage);
+  border-color: var(--cc-sage);
+}
+
+.form-check-input:focus {
+  border-color: var(--cc-sage);
+  box-shadow: 0 0 0 0.25rem rgba(67, 128, 111, 0.18);
+}
+
+.nav-pills {
+  --bs-nav-link-color: var(--cc-muted);
+  --bs-nav-link-hover-color: var(--cc-sage-dark);
+  --bs-nav-pills-link-active-bg: var(--cc-sage-soft);
+  --bs-nav-pills-link-active-color: var(--cc-sage-dark);
+  --bs-nav-pills-border-radius: 999px;
+  font-weight: 600;
+}
+
+.table {
+  --bs-table-color: var(--cc-ink);
+  --bs-table-bg: transparent;
+}
+
+.table th {
+  font-weight: 700;
+  color: var(--cc-muted);
 }
 
 /* ---------- Navbar and footer ---------- */
@@ -156,7 +183,6 @@ h1, h2, h3, h4,
   margin: 0 auto;
 }
 
-/* Soft glow behind the circle */
 .cc-breath::before {
   content: "";
   position: absolute;
@@ -174,7 +200,6 @@ h1, h2, h3, h4,
   animation: cc-breathe 16s ease-in-out infinite;
 }
 
-/* in (grow) - hold - out (shrink) - hold, 4 seconds each */
 @keyframes cc-breathe {
   0%   { transform: scale(0.6); }
   25%  { transform: scale(1); }
