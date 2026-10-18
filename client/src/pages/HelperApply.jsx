@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import CheckboxGroup from "../components/CheckboxGroup.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const emptyForm = {
   kind: "volunteer",
@@ -15,6 +16,7 @@ const emptyForm = {
 
 export default function HelperApply() {
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
   const [options, setOptions] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
@@ -36,6 +38,7 @@ export default function HelperApply() {
     setError("");
     try {
       await api.post("/helpers/apply", form);
+      await refreshUser();
       navigate("/profile");
     } catch (err) {
       setError(errorMessage(err));

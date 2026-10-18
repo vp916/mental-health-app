@@ -7,6 +7,7 @@ export default function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const [wantsToHelp, setWantsToHelp] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ export default function Register() {
     try {
       const { data } = await api.post("/auth/register", form);
       login(data.token, data.user);
-      navigate(homePath(data.user));
+      navigate(wantsToHelp ? "/helper/apply" : homePath(data.user));
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -33,8 +34,19 @@ export default function Register() {
   return (
     <div className="container">
       <div className="cc-auth mx-auto">
-        <h1 className="h2 mb-2">Create an account</h1>
-        <p className="text-secondary mb-4">Your journal and mood entries are private to you.</p>
+        <h1 className="h2 mb-4">Create an account</h1>
+
+        <div className="mb-2">How do you want to use CalmConnect?</div>
+        <div className="d-grid gap-2 mb-4">
+          <button type="button" className={`cc-choice ${!wantsToHelp ? "is-selected" : ""}`} onClick={() => setWantsToHelp(false)}>
+            <strong>I'm looking for support</strong>
+            <span>Share, track how you feel and talk to a helper.</span>
+          </button>
+          <button type="button" className={`cc-choice ${wantsToHelp ? "is-selected" : ""}`} onClick={() => setWantsToHelp(true)}>
+            <strong>I want to help others</strong>
+            <span>For therapists and trained listeners. An admin checks your details first.</span>
+          </button>
+        </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
 
@@ -56,7 +68,7 @@ export default function Register() {
             <div className="form-text">At least 6 characters.</div>
           </div>
           <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-            {loading ? "Creating account..." : "Create account"}
+            {loading ? "Creating account..." : wantsToHelp ? "Next: your helper details" : "Create account"}
           </button>
         </form>
 

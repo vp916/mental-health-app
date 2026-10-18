@@ -17,6 +17,7 @@ import Assessments from "./pages/Assessments.jsx";
 import AssessmentTake from "./pages/AssessmentTake.jsx";
 import Community from "./pages/Community.jsx";
 import PostDetail from "./pages/PostDetail.jsx";
+import NewPost from "./pages/NewPost.jsx";
 import Profile from "./pages/Profile.jsx";
 import HelperApply from "./pages/HelperApply.jsx";
 import NotFound from "./pages/NotFound.jsx";
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="/assessments" element={<Assessments />} />
           <Route path="/assessments/:type" element={<AssessmentTake />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/community/new" element={<NewPost />} />
           <Route path="/community/:id" element={<PostDetail />} />
           <Route path="/profile" element={<Profile />} />
         </Route>

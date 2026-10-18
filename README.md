@@ -54,7 +54,7 @@ server/
 
 | To change | Edit |
 |---|---|
-| Circles, specialisations, languages, emotions, resource categories | `server/src/options.js` |
+| Circles, reactions, crisis words, check-in questions, specialisations, languages, emotions | `server/src/options.js` |
 | Words used for pen names | `penNameWords` in `server/src/options.js` |
 | A table or column | `server/sql/schema.sql`, then `npm run db:setup` |
 | Sample data | `server/sql/seed.sql` |
@@ -65,7 +65,7 @@ server/
 ## Progress
 
 - [x] Milestone 1: accounts, pen names, roles, helper applications, admin approval
-- [ ] Milestone 2: community, check-ins, mood tracker, journal
+- [x] Milestone 2: community, check-ins, mood tracker, journal
 - [ ] Milestone 3: helper directory, matching, encrypted chat
 - [ ] Milestone 4: dashboard, resources, AI chatbot, demo data
 

@@ -27,6 +27,7 @@ export default function Navbar() {
   let links = publicLinks;
   if (user?.role === "admin") links = adminLinks;
   else if (user) links = userLinks;
+  if (user?.role === "user" && !user.helper_status) links = [...links, { to: "/helper/apply", label: "Become a helper" }];
 
   function handleLogout() {
     logout();

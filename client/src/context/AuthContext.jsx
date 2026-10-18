@@ -13,15 +13,16 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!localStorage.getItem("token")) return;
-    api
-      .get("/auth/me")
-      .then(({ data }) => saveUser(data))
-      .catch(() => logout());
+    refreshUser().catch(() => logout());
   }, []);
 
   function saveUser(user) {
     localStorage.setItem("user", JSON.stringify(user));
     setUser(user);
+  }
+
+  function refreshUser() {
+    return api.get("/auth/me").then(({ data }) => saveUser(data));
   }
 
   function login(token, user) {
@@ -35,7 +36,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, login, logout, refreshUser }}>{children}</AuthContext.Provider>;
 }
 
 export function homePath(user) {

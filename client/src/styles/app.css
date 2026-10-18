@@ -231,12 +231,37 @@ h1, h2, h3, h4,
   .cc-breath-circle {
     animation: none;
   }
+
+  .btn {
+    transition: none;
+  }
 }
 
 /* ---------- Auth forms ---------- */
 .cc-auth {
   max-width: 26rem;
   padding: 3rem 0;
+}
+
+.cc-choice {
+  display: grid;
+  gap: 0.15rem;
+  text-align: left;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid var(--cc-line);
+  border-radius: var(--cc-radius);
+  background: var(--cc-surface);
+  color: var(--cc-ink);
+}
+
+.cc-choice span {
+  font-size: 0.9rem;
+  color: var(--cc-muted);
+}
+
+.cc-choice.is-selected {
+  border-color: var(--cc-sage);
+  background: var(--cc-sage-soft);
 }
 
 /* ---------- Shared bits ---------- */

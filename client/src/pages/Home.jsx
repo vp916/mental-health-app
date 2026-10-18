@@ -53,6 +53,16 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="container pb-4">
+        <div className="cc-panel d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <div>
+            <h2 className="h5 mb-1">Are you a therapist or a trained listener?</h2>
+            <p className="text-secondary mb-0">Join as a helper. We verify every helper before they can talk to anyone.</p>
+          </div>
+          <Link to="/register" className="btn btn-outline-primary">Join as a helper</Link>
+        </div>
+      </section>
+
       <section className="container pb-5">
         <div className="cc-helpline">
           <strong>Having a hard time right now?</strong> Tele-MANAS is free and open all day:{" "}
