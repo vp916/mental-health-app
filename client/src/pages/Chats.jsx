@@ -29,7 +29,10 @@ export default function Chats() {
 
   return (
     <div className="container py-5" style={{ maxWidth: "44rem" }}>
-      <h1 className="h2 mb-4">Chats</h1>
+      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h1 className="h2 mb-0">Chats</h1>
+        <Link to="/ai" className="btn btn-outline-primary btn-sm">Ask the AI assistant</Link>
+      </div>
 
       {user.role === "helper" && (
         <div className="cc-panel mb-4">

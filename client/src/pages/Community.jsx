@@ -36,7 +36,7 @@ export default function Community() {
         <Link to="/community/new" className="btn btn-primary">New post</Link>
       </div>
       <p className="text-secondary mb-4">
-        Everyone here uses a pen name. There are no likes or downvotes, only support.
+        Everyone here uses a pen name. Reply with care, or send a supportive reaction.
       </p>
 
       <div className="d-flex flex-wrap gap-2 mb-4">

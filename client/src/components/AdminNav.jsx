@@ -4,6 +4,7 @@ const links = [
   { to: "/admin", label: "Overview", end: true },
   { to: "/admin/helpers", label: "Helper applications" },
   { to: "/admin/reports", label: "Reports" },
+  { to: "/admin/resources", label: "Resources" },
   { to: "/admin/users", label: "Users" },
 ];
 

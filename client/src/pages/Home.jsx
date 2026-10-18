@@ -6,7 +6,7 @@ const features = [
   { title: "Log how today felt", text: "Rate your mood, stress and sleep in under a minute. See how the week went." },
   { title: "Write it down", text: "A private journal only you can read. Tag entries by feeling and search them later." },
   { title: "Check in on stress and anxiety", text: "Short, well-known questionnaires that show where you are right now." },
-  { title: "Talk to people who get it", text: "Share and reply under a pen name. No likes, no downvotes, just support." },
+  { title: "Talk to people who get it", text: "Share and reply under a pen name. Others can only answer with replies and supportive reactions." },
 ];
 
 export default function Home() {

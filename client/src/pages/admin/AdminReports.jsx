@@ -45,7 +45,7 @@ export default function AdminReports() {
             </div>
             <p className="mb-2"><strong>Reason:</strong> {r.reason}</p>
 
-            <div className="cc-placeholder mb-3">
+            <div className="cc-quote mb-3">
               {r.post_id && (
                 <>
                   <div className="small mb-1">Post: <Link to={`/community/${r.post_id}`}>{r.post_title}</Link></div>

@@ -4,40 +4,36 @@ import api from "../../api/axios.js";
 import AdminNav from "../../components/AdminNav.jsx";
 
 export default function AdminHome() {
-  const [pending, setPending] = useState(null);
-  const [users, setUsers] = useState(null);
-  const [reports, setReports] = useState(null);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    api.get("/admin/helpers?status=pending").then(({ data }) => setPending(data.length));
-    api.get("/admin/users").then(({ data }) => setUsers(data.length));
-    api.get("/admin/reports").then(({ data }) => setReports(data.length));
+    api.get("/admin/stats").then(({ data }) => setStats(data));
   }, []);
+
+  if (!stats) return <div className="container py-5 text-secondary">Loading...</div>;
+
+  const rows = [
+    { label: "Helper applications waiting", value: stats.pending_helpers, link: "/admin/helpers" },
+    { label: "Open reports", value: stats.open_reports, link: "/admin/reports" },
+    { label: "Verified helpers", value: stats.helpers },
+    { label: "Accounts", value: stats.users, link: "/admin/users" },
+    { label: "Posts this week", value: stats.posts_this_week },
+    { label: "Mood entries this week", value: stats.mood_entries_this_week },
+    { label: "Private chats started", value: stats.chats },
+  ];
 
   return (
     <div className="container py-5">
       <h1 className="h2 mb-4">Admin</h1>
       <AdminNav />
 
-      <div className="row g-3" style={{ maxWidth: "60rem" }}>
-        <div className="col-sm-4">
-          <Link to="/admin/helpers" className="cc-panel d-block text-decoration-none">
-            <div className="fs-2 fw-bold">{pending ?? "–"}</div>
-            <div className="text-secondary">Helper applications waiting</div>
-          </Link>
-        </div>
-        <div className="col-sm-4">
-          <Link to="/admin/reports" className="cc-panel d-block text-decoration-none">
-            <div className="fs-2 fw-bold">{reports ?? "–"}</div>
-            <div className="text-secondary">Open reports</div>
-          </Link>
-        </div>
-        <div className="col-sm-4">
-          <Link to="/admin/users" className="cc-panel d-block text-decoration-none">
-            <div className="fs-2 fw-bold">{users ?? "–"}</div>
-            <div className="text-secondary">Registered users</div>
-          </Link>
-        </div>
+      <div className="cc-panel" style={{ maxWidth: "32rem" }}>
+        {rows.map((r) => (
+          <div key={r.label} className="d-flex justify-content-between py-2 border-bottom">
+            {r.link ? <Link to={r.link}>{r.label}</Link> : <span>{r.label}</span>}
+            <strong>{r.value}</strong>
+          </div>
+        ))}
       </div>
     </div>
   );

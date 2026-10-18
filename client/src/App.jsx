@@ -22,6 +22,8 @@ import Helpers from "./pages/Helpers.jsx";
 import HelperProfile from "./pages/HelperProfile.jsx";
 import Chats from "./pages/Chats.jsx";
 import Chat from "./pages/Chat.jsx";
+import AiChat from "./pages/AiChat.jsx";
+import Privacy from "./pages/Privacy.jsx";
 import Profile from "./pages/Profile.jsx";
 import HelperApply from "./pages/HelperApply.jsx";
 import NotFound from "./pages/NotFound.jsx";
@@ -42,6 +44,7 @@ export default function App() {
         <Route path="/help" element={<Help />} />
         <Route path="/breathe" element={<Breathe />} />
         <Route path="/resources" element={<Resources />} />
+        <Route path="/privacy" element={<Privacy />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -58,6 +61,7 @@ export default function App() {
           <Route path="/helpers/:id" element={<HelperProfile />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/chats/:id" element={<Chat />} />
+          <Route path="/ai" element={<AiChat />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 
