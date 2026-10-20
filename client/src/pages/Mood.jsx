@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api, { errorMessage } from "../api/axios.js";
 import MoodChart from "../components/MoodChart.jsx";
+import PageHeader from "../components/PageHeader.jsx";
 
 const today = new Date().toLocaleDateString("en-CA");
 const emptyForm = { mood: null, stress: null, energy: null, sleep_hours: "", note: "" };
@@ -64,7 +65,7 @@ export default function Mood() {
 
   return (
     <div className="container py-5">
-      <h1 className="h2 mb-4">Mood</h1>
+      <PageHeader title="Mood" text="Log how today is going and see how the last few weeks looked." />
 
       <div className="row g-4">
         <div className="col-lg-5">

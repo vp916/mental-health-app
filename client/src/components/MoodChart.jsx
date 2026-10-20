@@ -7,9 +7,9 @@ export default function MoodChart({ entries }) {
   const data = {
     labels: entries.map((e) => new Date(`${e.entry_date}T00:00`).toLocaleDateString(undefined, { day: "numeric", month: "short" })),
     datasets: [
-      { label: "Mood", data: entries.map((e) => e.mood), borderColor: "#43806f", backgroundColor: "#43806f", tension: 0.3 },
-      { label: "Stress", data: entries.map((e) => e.stress), borderColor: "#c98a2b", backgroundColor: "#c98a2b", tension: 0.3 },
-      { label: "Energy", data: entries.map((e) => e.energy), borderColor: "#6a8fb5", backgroundColor: "#6a8fb5", tension: 0.3 },
+      { label: "Mood", data: entries.map((e) => e.mood), borderColor: "#6d4fc9", backgroundColor: "#6d4fc9", tension: 0.3 },
+      { label: "Stress", data: entries.map((e) => e.stress), borderColor: "#d39a1e", backgroundColor: "#d39a1e", tension: 0.3 },
+      { label: "Energy", data: entries.map((e) => e.energy), borderColor: "#4f7fd9", backgroundColor: "#4f7fd9", tension: 0.3 },
     ],
   };
 

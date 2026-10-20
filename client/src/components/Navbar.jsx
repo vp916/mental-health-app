@@ -36,7 +36,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="navbar navbar-expand-xl cc-nav">
+    <nav className="navbar navbar-expand-xl cc-nav sticky-top">
       <div className="container">
         <Link to={user ? homePath(user) : "/"} className="navbar-brand cc-brand">
           CalmConnect

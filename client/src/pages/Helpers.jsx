@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import HelperCard from "../components/HelperCard.jsx";
+import PageHeader from "../components/PageHeader.jsx";
 
 const emptyFilters = { specialisation: "", language: "", gender: "", free: false, available: false };
 
@@ -49,10 +50,7 @@ export default function Helpers() {
 
   return (
     <div className="container py-5">
-      <h1 className="h2 mb-2">Find a helper</h1>
-      <p className="text-secondary mb-4">
-        Every helper here has been checked by our team. Chats with them are end-to-end encrypted.
-      </p>
+      <PageHeader title="Find a helper" text="Every helper here has been checked by our team. Chats with them are end-to-end encrypted." />
 
       {suggested?.helpers.length > 0 && (
         <section className="mb-5">

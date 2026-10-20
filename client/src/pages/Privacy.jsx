@@ -1,10 +1,9 @@
+import PageHeader from "../components/PageHeader.jsx";
+
 export default function Privacy() {
   return (
     <div className="container py-5" style={{ maxWidth: "46rem" }}>
-      <h1 className="h2 mb-2">Privacy and terms</h1>
-      <p className="text-secondary mb-5">
-        CalmConnect is a college project. This page explains, in plain words, what we store and how we protect it.
-      </p>
+      <PageHeader title="Privacy and terms" text="CalmConnect is a college project. This page explains, in plain words, what we store and how we protect it." />
 
       <h2 className="h5">What we store</h2>
       <ul className="mb-4">

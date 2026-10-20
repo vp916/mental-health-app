@@ -15,6 +15,7 @@ export default function Footer() {
           <Link to="/privacy">Privacy and terms</Link>
         </p>
       </div>
+      <div className="cc-wordmark" aria-hidden="true">calmconnect</div>
     </footer>
   );
 }

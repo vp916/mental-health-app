@@ -4,6 +4,12 @@ import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { chatKey, decryptMessage, encryptMessage } from "../crypto.js";
 import ReportButton from "../components/ReportButton.jsx";
+import { NatureBackdrop } from "../components/ChatBackdrop.jsx";
+
+// "Dr. Ananya Rao" -> "AR"
+function initials(name) {
+  return name.replace(/^Dr\.?\s+/, "").split(" ").map((w) => w[0]).slice(0, 2).join("");
+}
 
 export default function Chat() {
   const { id } = useParams();
@@ -76,17 +82,8 @@ export default function Chat() {
   if (!chat) return <div className="container py-5 text-secondary">Loading...</div>;
 
   return (
-    <div className="container py-5" style={{ maxWidth: "44rem" }}>
-      <Link to="/chats" className="small">Back to chats</Link>
-      <div className="d-flex flex-wrap justify-content-between align-items-end gap-2 mt-3 mb-1">
-        <h1 className="h3 mb-0">{chat.other_name}</h1>
-        {!reporting && (
-          <button className="btn btn-link btn-sm text-secondary p-0" onClick={() => setReporting(true)}>Report this chat</button>
-        )}
-      </div>
-      <p className="small text-secondary mb-3">
-        End-to-end encrypted. Only you and {chat.other_name} can read these messages.
-      </p>
+    <div className="container py-5" style={{ maxWidth: "48rem" }}>
+      <Link to="/chats" className="small d-inline-block mb-3">Back to chats</Link>
 
       {!localStorage.getItem("privateKey") && (
         <div className="alert alert-warning">Your secure chat key isn't on this device. Log out and log in again to read your messages.</div>
@@ -103,31 +100,58 @@ export default function Chat() {
         </div>
       )}
 
-      <div className="cc-chat mb-3">
-        {[...messages].reverse().map((m) => (
-          <div key={m.id} className={`cc-message ${m.sender_id === user.id ? "is-mine" : ""}`}>
-            {reporting && (
-              <input type="checkbox" className="form-check-input me-2" checked={selected.includes(m.id)}
-                onChange={() => toggleSelected(m.id)} aria-label="Include in report" />
-            )}
-            <div>
-              <div style={{ whiteSpace: "pre-wrap" }}>{m.text}</div>
-              <div className="cc-message-time">
-                {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              </div>
+      <div className="cc-chat-scene">
+        <NatureBackdrop />
+        <div className="cc-chat-window">
+          <div className="cc-chat-head">
+            <span className="cc-avatar">{initials(chat.other_name)}</span>
+            <div className="me-auto">
+              <h1 className="h6 mb-0">{chat.other_name}</h1>
+              <div className="small text-secondary">End-to-end encrypted. Only the two of you can read this.</div>
             </div>
+            {!reporting && (
+              <button className="btn btn-link btn-sm text-secondary p-0" onClick={() => setReporting(true)}>Report</button>
+            )}
           </div>
-        ))}
-        {key && messages.length === 0 && <p className="text-secondary text-center my-auto">Say hello. Take your time.</p>}
+
+          <div className="cc-chat">
+            {[...messages].reverse().map((m) => (
+              <div key={m.id} className={`cc-message-row ${m.sender_id === user.id ? "is-mine" : ""}`}>
+                {m.sender_id !== user.id && <span className="cc-avatar">{initials(chat.other_name)}</span>}
+                <div className="cc-message">
+                  {reporting && (
+                    <input type="checkbox" className="form-check-input me-2" checked={selected.includes(m.id)}
+                      onChange={() => toggleSelected(m.id)} aria-label="Include in report" />
+                  )}
+                  <div>
+                    <div style={{ whiteSpace: "pre-wrap" }}>{m.text}</div>
+                    <div className="cc-message-time">
+                      {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {key && messages.length === 0 && (
+              <div className="text-center my-auto">
+                <span className="cc-avatar cc-avatar-lg">{initials(chat.other_name)}</span>
+                <p className="h5 mt-3 mb-1">Say hello to {chat.other_name}.</p>
+                <p className="text-secondary mb-0">Take your time. You can start with how you feel.</p>
+              </div>
+            )}
+          </div>
+
+          <form className="cc-chat-form" onSubmit={send}>
+            <div className="d-flex gap-2">
+              <input className="form-control" placeholder="Write a message" value={text}
+                onChange={(e) => setText(e.target.value)} disabled={!key} />
+              <button type="submit" className="btn btn-primary" disabled={!key || !text.trim()}>Send</button>
+            </div>
+          </form>
+        </div>
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
-
-      <form className="d-flex gap-2" onSubmit={send}>
-        <input className="form-control" placeholder="Write a message" value={text}
-          onChange={(e) => setText(e.target.value)} disabled={!key} />
-        <button type="submit" className="btn btn-primary" disabled={!key || !text.trim()}>Send</button>
-      </form>
+      {error && <div className="alert alert-danger mt-3">{error}</div>}
     </div>
   );
 }

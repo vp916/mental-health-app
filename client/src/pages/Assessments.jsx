@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios.js";
+import PageHeader from "../components/PageHeader.jsx";
 
 export default function Assessments() {
   const [tests, setTests] = useState({});
@@ -13,10 +14,7 @@ export default function Assessments() {
 
   return (
     <div className="container py-5" style={{ maxWidth: "48rem" }}>
-      <h1 className="h2 mb-2">Check-ins</h1>
-      <p className="text-secondary mb-4">
-        Short, well-known questionnaires that show how you're doing right now. They are not a diagnosis.
-      </p>
+      <PageHeader title="Check-ins" text="Short, well-known questionnaires that show how you're doing right now. They are not a diagnosis." />
 
       <div className="row g-3 mb-5">
         {Object.entries(tests).map(([type, test]) => (

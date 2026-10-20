@@ -1,3 +1,5 @@
+import PageHeader from "../components/PageHeader.jsx";
+
 const helplines = [
   { name: "Tele-MANAS (Government of India)", number: "14416 or 1-800-891-4416", note: "Free, 24 hours, many Indian languages" },
   { name: "Emergency services", number: "112", note: "If you or someone else is in immediate danger" },
@@ -6,11 +8,8 @@ const helplines = [
 export default function Help() {
   return (
     <div className="container py-5" style={{ maxWidth: "46rem" }}>
-      <h1 className="h2 mb-3">Get help</h1>
-      <p className="lead text-secondary mb-4">
-        If you're struggling, you don't have to work it out alone. Talking to someone trained can help,
-        even if you're not sure what to say.
-      </p>
+      <PageHeader title="Get help"
+        text="If you're struggling, you don't have to work it out alone. Talking to someone trained can help, even if you're not sure what to say." />
 
       <div className="d-grid gap-3 mb-5">
         {helplines.map((h) => (

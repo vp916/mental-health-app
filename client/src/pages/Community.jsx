@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
+import PageHeader from "../components/PageHeader.jsx";
 
 export default function Community() {
   const [circles, setCircles] = useState([]);
@@ -31,13 +32,9 @@ export default function Community() {
 
   return (
     <div className="container py-5">
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-2">
-        <h1 className="h2 mb-0">Community</h1>
+      <PageHeader title="Community" text="Everyone here uses a pen name. Reply with care, or send a supportive reaction.">
         <Link to="/community/new" className="btn btn-primary">New post</Link>
-      </div>
-      <p className="text-secondary mb-4">
-        Everyone here uses a pen name. Reply with care, or send a supportive reaction.
-      </p>
+      </PageHeader>
 
       <div className="d-flex flex-wrap gap-2 mb-4">
         {["", ...circles].map((c) => (

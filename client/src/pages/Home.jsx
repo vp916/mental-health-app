@@ -1,6 +1,13 @@
 import { Link, Navigate } from "react-router-dom";
 import { useAuth, homePath } from "../context/AuthContext.jsx";
 import BreathingCircle from "../components/BreathingCircle.jsx";
+import StepArt from "../components/StepArt.jsx";
+
+const steps = [
+  { title: "Get a pen name", art: "penName", text: "We give you a random name like Quiet Otter 42. Nobody in the community sees who you really are." },
+  { title: "Notice how you're doing", art: "checkIn", text: "Log your mood, write in a private journal and take short check-ins for stress and anxiety." },
+  { title: "Talk when you're ready", art: "talk", text: "Message a verified therapist or trained listener. Only the two of you can read the chat." },
+];
 
 const features = [
   { title: "Log how today felt", text: "Rate your mood, stress and sleep in under a minute. See how the week went." },
@@ -18,48 +25,70 @@ export default function Home() {
       <section className="cc-hero">
         <div className="container">
           <div className="row align-items-center g-5">
-            <div className="col-lg-6">
-              <h1 className="mb-3">Take a minute for yourself.</h1>
+            <div className="col-lg-7">
+              <span className="cc-badge mb-4">Verified helpers, no real names</span>
+              <h1 className="mb-4">
+                <span className="cc-rise">A quiet place</span>
+                <span className="cc-rise" style={{ "--delay": "0.15s" }}>for heavy days.</span>
+              </h1>
               <p className="lead mb-4">
-                CalmConnect helps you track your mood, keep a private journal and find support when college
-                gets heavy. Try the breathing circle while you're here.
+                Track your mood, keep a private journal and find support when college gets heavy.
+                The orb in the cube breathes with you. Follow it for a minute.
               </p>
-              <div className="d-flex flex-wrap gap-2">
-                <Link to="/register" className="btn btn-primary btn-lg">
-                  Create an account
-                </Link>
-                <Link to="/login" className="btn btn-outline-primary btn-lg">
-                  Log in
-                </Link>
+              <div className="d-flex flex-wrap align-items-center gap-3">
+                <Link to="/register" className="btn btn-primary btn-lg">Create an account</Link>
+                <Link to="/login" className="cc-text-link">I already have an account</Link>
               </div>
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-5">
               <BreathingCircle />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="cc-features">
-        <div className="container">
+      <section className="container">
+        <div className="cc-night">
+          <div className="cc-night-head">
+            <div>
+              <h2 className="mb-2">How CalmConnect works</h2>
+              <p className="cc-night-lead mb-0">Three steps. You never have to use your real name.</p>
+            </div>
+            <StepArt name="cluster" className="cc-night-art d-none d-md-block" />
+          </div>
           <div className="row g-4">
-            {features.map((f) => (
-              <div className="col-md-6" key={f.title}>
-                <h2 className="mb-2">{f.title}</h2>
-                <p className="mb-0">{f.text}</p>
+            {steps.map((s, i) => (
+              <div className="col-md-4" key={s.title}>
+                <div className="cc-tab-card h-100" data-step={`/0${i + 1}`}>
+                  <StepArt name={s.art} className="cc-tab-art" />
+                  <h3 className="h4 mb-2">{s.title}</h3>
+                  <p className="mb-0">{s.text}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      <section className="cc-features">
+        <div className="container">
+          <h2 className="mb-4">What's inside</h2>
+          {features.map((f) => (
+            <div className="cc-feature row g-2" key={f.title}>
+              <h3 className="col-md-5 mb-0">{f.title}</h3>
+              <p className="col-md-7 mb-0">{f.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="container pb-4">
-        <div className="cc-panel d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div className="cc-join d-flex flex-wrap align-items-center justify-content-between gap-3">
           <div>
-            <h2 className="h5 mb-1">Are you a therapist or a trained listener?</h2>
-            <p className="text-secondary mb-0">Join as a helper. We verify every helper before they can talk to anyone.</p>
+            <h2 className="h4 mb-1">Are you a therapist or a trained listener?</h2>
+            <p className="mb-0">Join as a helper. We verify every helper before they can talk to anyone.</p>
           </div>
-          <Link to="/register" className="btn btn-outline-primary">Join as a helper</Link>
+          <Link to="/register" className="btn btn-primary">Join as a helper</Link>
         </div>
       </section>
 

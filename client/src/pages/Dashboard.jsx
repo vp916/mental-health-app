@@ -51,15 +51,16 @@ export default function Dashboard() {
 
   return (
     <div className="container py-5">
-      <h1 className="h2 mb-1">Hi, {user.name.split(" ")[0]}</h1>
-      {affirmation && <p className="text-secondary mb-4">{affirmation.text}</p>}
-
-      {!loggedToday && (
-        <div className="cc-helpline d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-          <span>You haven't logged how today is going yet.</span>
-          <Link to="/mood" className="btn btn-primary btn-sm">Log today's mood</Link>
-        </div>
-      )}
+      <section className="cc-night mb-4">
+        <h1 className="cc-greeting mb-2">Hi, {user.name.split(" ")[0]}</h1>
+        {affirmation && <p className="cc-night-lead mb-0">{affirmation.text}</p>}
+        {!loggedToday && (
+          <div className="d-flex flex-wrap align-items-center gap-3 mt-4">
+            <span>You haven't logged how today is going yet.</span>
+            <Link to="/mood" className="btn btn-primary btn-sm">Log today's mood</Link>
+          </div>
+        )}
+      </section>
 
       <div className="row g-4">
         <div className="col-lg-8 d-grid gap-4 align-content-start">

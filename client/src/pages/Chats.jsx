@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import PageHeader from "../components/PageHeader.jsx";
 
 export default function Chats() {
   const { user } = useAuth();
@@ -29,10 +30,9 @@ export default function Chats() {
 
   return (
     <div className="container py-5" style={{ maxWidth: "44rem" }}>
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-        <h1 className="h2 mb-0">Chats</h1>
+      <PageHeader title="Chats" text="Your private conversations with helpers.">
         <Link to="/ai" className="btn btn-outline-primary btn-sm">Ask the AI assistant</Link>
-      </div>
+      </PageHeader>
 
       {user.role === "helper" && (
         <div className="cc-panel mb-4">

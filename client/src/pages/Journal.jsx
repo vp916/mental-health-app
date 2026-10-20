@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
+import PageHeader from "../components/PageHeader.jsx";
 
 export default function Journal() {
   const [search, setSearch] = useState("");
@@ -25,11 +26,9 @@ export default function Journal() {
 
   return (
     <div className="container py-5" style={{ maxWidth: "48rem" }}>
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-2">
-        <h1 className="h2 mb-0">Journal</h1>
+      <PageHeader title="Journal" text="Only you can read your journal.">
         <Link to="/journal/new" className="btn btn-primary">New entry</Link>
-      </div>
-      <p className="text-secondary mb-4">Only you can read your journal.</p>
+      </PageHeader>
 
       <input type="search" className="form-control mb-4" placeholder="Search your entries"
         value={search} onChange={(e) => setSearch(e.target.value)} />

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { lockPrivateKey } from "../crypto.js";
+import PageHeader from "../components/PageHeader.jsx";
 
 const statusText = {
   pending: "Your helper application is waiting for an admin to review it.",
@@ -43,7 +44,7 @@ export default function Profile() {
 
   return (
     <div className="container py-5" style={{ maxWidth: "40rem" }}>
-      <h1 className="h2 mb-4">Profile</h1>
+      <PageHeader title="Profile" />
 
       <div className="cc-panel mb-4">
         <div className="text-secondary small">Your pen name in the community</div>

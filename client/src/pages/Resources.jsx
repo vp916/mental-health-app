@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import PageHeader from "../components/PageHeader.jsx";
 
 export default function Resources() {
   const { user } = useAuth();
@@ -48,7 +49,7 @@ export default function Resources() {
 
   return (
     <div className="container py-5">
-      <h1 className="h2 mb-4">Resources</h1>
+      <PageHeader title="Resources" text="Reading, videos and exercises for stress, sleep and student life. Save the ones that help." />
 
       <div className="d-flex flex-wrap gap-2 mb-4">
         {filters.map((c) => (
