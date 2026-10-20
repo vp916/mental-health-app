@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
-import MoodFace, { FaceBackdrop } from "../components/ChatBackdrop.jsx";
+import ChatBackdrop, { aiFaces } from "../components/ChatBackdrop.jsx";
 import PageHeader from "../components/PageHeader.jsx";
 
 export default function AiChat() {
@@ -38,10 +38,10 @@ export default function AiChat() {
       </>} />
 
       <div className="cc-chat-scene">
-        <FaceBackdrop />
+        <ChatBackdrop items={aiFaces} />
         <div className="cc-chat-window">
           <div className="cc-chat-head">
-            <MoodFace size={40} />
+            <img className="flex-shrink-0" src="/images/chat/assistant.svg" alt="" width={40} height={40} />
             <div>
               <div className="fw-semibold">Wellness assistant</div>
               <div className="small text-secondary">AI, not a person</div>
@@ -51,7 +51,7 @@ export default function AiChat() {
           <div className="cc-chat">
             {waiting && (
               <div className="cc-message-row">
-                <MoodFace size={34} />
+                <img className="flex-shrink-0" src="/images/chat/assistant.svg" alt="" width={34} height={34} />
                 <div className="cc-message cc-typing" aria-label="The assistant is typing">
                   <span></span><span></span><span></span>
                 </div>
@@ -59,7 +59,7 @@ export default function AiChat() {
             )}
             {[...messages].reverse().map((m, i) => (
               <div key={messages.length - i} className={`cc-message-row ${m.role === "user" ? "is-mine" : ""}`}>
-                {m.role !== "user" && <MoodFace size={34} />}
+                {m.role !== "user" && <img className="flex-shrink-0" src="/images/chat/assistant.svg" alt="" width={34} height={34} />}
                 <div className="cc-message">
                   <div>
                     <div style={{ whiteSpace: "pre-wrap" }}>{m.text}</div>
@@ -70,7 +70,7 @@ export default function AiChat() {
             ))}
             {messages.length === 0 && (
               <div className="text-center my-auto">
-                <MoodFace size={64} />
+                <img className="flex-shrink-0" src="/images/chat/assistant.svg" alt="" width={64} height={64} />
                 <p className="h5 mt-3 mb-1">Hi, I'm here to listen.</p>
                 <p className="text-secondary mb-0">Tell me what's on your mind. There's no wrong place to start.</p>
               </div>

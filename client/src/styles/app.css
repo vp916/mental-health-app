@@ -546,7 +546,7 @@
   z-index: 1;
 }
 
-.cc-faces svg {
+.cc-faces img {
   position: absolute;
   mix-blend-mode: multiply;
   transform: rotate(var(--rotate));
@@ -644,7 +644,7 @@ a.cc-panel:hover {
   }
 
   .cc-typing span,
-  .cc-faces svg {
+  .cc-faces img {
     animation: none;
   }
 }

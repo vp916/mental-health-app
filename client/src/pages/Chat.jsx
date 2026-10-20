@@ -4,7 +4,7 @@ import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { chatKey, decryptMessage, encryptMessage } from "../crypto.js";
 import ReportButton from "../components/ReportButton.jsx";
-import { NatureBackdrop } from "../components/ChatBackdrop.jsx";
+import ChatBackdrop, { helperShapes } from "../components/ChatBackdrop.jsx";
 
 // "Dr. Ananya Rao" -> "AR"
 function initials(name) {
@@ -101,7 +101,7 @@ export default function Chat() {
       )}
 
       <div className="cc-chat-scene">
-        <NatureBackdrop />
+        <ChatBackdrop items={helperShapes} />
         <div className="cc-chat-window">
           <div className="cc-chat-head">
             <span className="cc-avatar">{initials(chat.other_name)}</span>

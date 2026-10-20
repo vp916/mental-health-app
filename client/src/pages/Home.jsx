@@ -1,12 +1,11 @@
 import { Link, Navigate } from "react-router-dom";
 import { useAuth, homePath } from "../context/AuthContext.jsx";
 import BreathingCircle from "../components/BreathingCircle.jsx";
-import StepArt from "../components/StepArt.jsx";
 
 const steps = [
-  { title: "Get a pen name", art: "penName", text: "We give you a random name like Quiet Otter 42. Nobody in the community sees who you really are." },
-  { title: "Notice how you're doing", art: "checkIn", text: "Log your mood, write in a private journal and take short check-ins for stress and anxiety." },
-  { title: "Talk when you're ready", art: "talk", text: "Message a verified therapist or trained listener. Only the two of you can read the chat." },
+  { title: "Get a pen name", image: "/images/step-pen-name.svg", text: "We give you a random name like Quiet Otter 42. Nobody in the community sees who you really are." },
+  { title: "Notice how you're doing", image: "/images/step-check-in.svg", text: "Log your mood, write in a private journal and take short check-ins for stress and anxiety." },
+  { title: "Talk when you're ready", image: "/images/step-talk.svg", text: "Message a verified therapist or trained listener. Only the two of you can read the chat." },
 ];
 
 const features = [
@@ -54,13 +53,13 @@ export default function Home() {
               <h2 className="mb-2">How CalmConnect works</h2>
               <p className="cc-night-lead mb-0">Three steps. You never have to use your real name.</p>
             </div>
-            <StepArt name="cluster" className="cc-night-art d-none d-md-block" />
+            <img className="cc-night-art d-none d-md-block" src="/images/faces-cluster.svg" alt="" />
           </div>
           <div className="row g-4">
             {steps.map((s, i) => (
               <div className="col-md-4" key={s.title}>
                 <div className="cc-tab-card h-100" data-step={`/0${i + 1}`}>
-                  <StepArt name={s.art} className="cc-tab-art" />
+                  <img className="cc-tab-art" src={s.image} alt="" />
                   <h3 className="h4 mb-2">{s.title}</h3>
                   <p className="mb-0">{s.text}</p>
                 </div>
