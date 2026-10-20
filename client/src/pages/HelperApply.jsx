@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import CheckboxGroup from "../components/CheckboxGroup.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
 
 const emptyForm = {
   kind: "volunteer",
@@ -17,15 +18,30 @@ const emptyForm = {
 export default function HelperApply() {
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
-  const [options, setOptions] = useState(null);
+  const options = useOptions();
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
 
+  // If they applied before, fill the form with their earlier answers.
   useEffect(() => {
-    api.get("/options").then(({ data }) => setOptions(data));
-    api.get("/helpers/me").then(({ data }) => {
-      if (data) setForm({ ...emptyForm, ...data, license_number: data.license_number || "", gender: data.gender || "" });
-    });
+    async function loadApplication() {
+      try {
+        const { data } = await api.get("/helpers/me");
+        if (!data) return;
+        setForm({
+          kind: data.kind,
+          license_number: data.license_number || "",
+          bio: data.bio,
+          specialisations: data.specialisations,
+          languages: data.languages,
+          gender: data.gender || "",
+          is_free: data.is_free,
+        });
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+    loadApplication();
   }, []);
 
   function handleChange(e) {

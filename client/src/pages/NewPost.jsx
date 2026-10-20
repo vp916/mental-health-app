@@ -1,20 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
 import CrisisNotice, { hasCrisisWords } from "../components/CrisisNotice.jsx";
 
 export default function NewPost() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [options, setOptions] = useState(null);
+  const options = useOptions();
   const [form, setForm] = useState({ circle: "", title: "", body: "" });
   const [showCrisis, setShowCrisis] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    api.get("/options").then(({ data }) => setOptions(data));
-  }, []);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });

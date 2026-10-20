@@ -11,10 +11,15 @@ export default function HelperProfile() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api
-      .get(`/helpers/${id}`)
-      .then(({ data }) => setHelper(data))
-      .catch((err) => setError(errorMessage(err)));
+    async function load() {
+      try {
+        const { data } = await api.get(`/helpers/${id}`);
+        setHelper(data);
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+    load();
   }, [id]);
 
   async function startChat() {

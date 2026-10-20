@@ -33,6 +33,10 @@ export default function Register() {
     }
   }
 
+  let buttonText = "Create account";
+  if (wantsToHelp) buttonText = "Next: your helper details";
+  if (loading) buttonText = "Creating account...";
+
   return (
     <div className="container">
       <div className="cc-auth mx-auto">
@@ -70,7 +74,7 @@ export default function Register() {
             <div className="form-text">At least 6 characters.</div>
           </div>
           <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-            {loading ? "Creating account..." : wantsToHelp ? "Next: your helper details" : "Create account"}
+            {buttonText}
           </button>
         </form>
 

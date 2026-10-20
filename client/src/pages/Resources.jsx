@@ -2,19 +2,29 @@ import { useEffect, useState } from "react";
 import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import PageHeader from "../components/PageHeader.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
 
 export default function Resources() {
   const { user } = useAuth();
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
+  const options = useOptions();
+  const categories = options ? options.resourceCategories : [];
+  const [category, setCategory] = useState("");     // "" = all categories
+  const [showSaved, setShowSaved] = useState(false);
   const [resources, setResources] = useState([]);
   const [savedIds, setSavedIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/options").then(({ data }) => setCategories(data.resourceCategories));
-    if (user) api.get("/bookmarks").then(({ data }) => setSavedIds(data.map((r) => r.id)));
+    async function loadSaved() {
+      try {
+        const { data } = await api.get("/bookmarks");
+        setSavedIds(data.map((r) => r.id));
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+    if (user) loadSaved();
   }, [user]);
 
   useEffect(() => {
@@ -22,8 +32,7 @@ export default function Resources() {
       setLoading(true);
       setError("");
       try {
-        const params = category && category !== "Saved" ? { category } : {};
-        const { data } = await api.get("/resources", { params });
+        const { data } = await api.get("/resources", { params: { category } });
         setResources(data);
       } catch (err) {
         setError(errorMessage(err));
@@ -35,30 +44,50 @@ export default function Resources() {
   }, [category]);
 
   async function toggleSaved(id) {
-    if (savedIds.includes(id)) {
-      await api.delete(`/bookmarks/${id}`);
-      setSavedIds(savedIds.filter((x) => x !== id));
-    } else {
-      await api.post(`/bookmarks/${id}`);
-      setSavedIds([...savedIds, id]);
+    try {
+      if (savedIds.includes(id)) {
+        await api.delete(`/bookmarks/${id}`);
+        setSavedIds(savedIds.filter((x) => x !== id));
+      } else {
+        await api.post(`/bookmarks/${id}`);
+        setSavedIds([...savedIds, id]);
+      }
+    } catch (err) {
+      setError(errorMessage(err));
     }
   }
 
-  const filters = user ? ["", "Saved", ...categories] : ["", ...categories];
-  const shown = category === "Saved" ? resources.filter((r) => savedIds.includes(r.id)) : resources;
+  function chooseCategory(c) {
+    setCategory(c);
+    setShowSaved(false);
+  }
+
+  function chooseSaved() {
+    setCategory("");
+    setShowSaved(true);
+  }
+
+  let shown = resources;
+  if (showSaved) shown = resources.filter((r) => savedIds.includes(r.id));
 
   return (
     <div className="container py-5">
       <PageHeader title="Resources" text="Reading, videos and exercises for stress, sleep and student life. Save the ones that help." />
 
       <div className="d-flex flex-wrap gap-2 mb-4">
-        {filters.map((c) => (
-          <button
-            key={c || "all"}
-            className={`btn btn-sm ${c === category ? "btn-primary" : "btn-outline-primary"}`}
-            onClick={() => setCategory(c)}
-          >
-            {c || "All"}
+        <button className={`btn btn-sm ${!showSaved && category === "" ? "btn-primary" : "btn-outline-primary"}`}
+          onClick={() => chooseCategory("")}>
+          All
+        </button>
+        {user && (
+          <button className={`btn btn-sm ${showSaved ? "btn-primary" : "btn-outline-primary"}`} onClick={chooseSaved}>
+            Saved
+          </button>
+        )}
+        {categories.map((c) => (
+          <button key={c} className={`btn btn-sm ${!showSaved && c === category ? "btn-primary" : "btn-outline-primary"}`}
+            onClick={() => chooseCategory(c)}>
+            {c}
           </button>
         ))}
       </div>
@@ -66,7 +95,7 @@ export default function Resources() {
       {loading && <p className="text-secondary">Loading...</p>}
       {error && <div className="alert alert-danger">{error}</div>}
       {!loading && !error && shown.length === 0 && (
-        <p className="text-secondary">{category === "Saved" ? "You haven't saved anything yet." : "Nothing in this category yet."}</p>
+        <p className="text-secondary">{showSaved ? "You haven't saved anything yet." : "Nothing in this category yet."}</p>
       )}
 
       <div className="d-grid gap-3" style={{ maxWidth: "46rem" }}>

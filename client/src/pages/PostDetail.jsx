@@ -3,11 +3,12 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import ReportButton from "../components/ReportButton.jsx";
 import CrisisNotice, { hasCrisisWords } from "../components/CrisisNotice.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
 
 export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [options, setOptions] = useState(null);
+  const options = useOptions();
   const [post, setPost] = useState(null);
   const [reply, setReply] = useState("");
   const [showCrisis, setShowCrisis] = useState(false);
@@ -24,13 +25,16 @@ export default function PostDetail() {
   }
 
   useEffect(() => {
-    api.get("/options").then(({ data }) => setOptions(data));
     load();
   }, [id]);
 
   async function toggleReaction(type) {
-    const { data } = await api.post(`/posts/${id}/reactions`, { type });
-    setPost({ ...post, my_reactions: data });
+    try {
+      const { data } = await api.post(`/posts/${id}/reactions`, { type });
+      setPost({ ...post, my_reactions: data });
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   async function sendReply() {
@@ -55,14 +59,21 @@ export default function PostDetail() {
   }
 
   async function deletePost() {
-    await api.delete(`/posts/${id}`);
-    navigate("/community");
+    try {
+      await api.delete(`/posts/${id}`);
+      navigate("/community");
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   if (error && !post) return <div className="container py-5"><div className="alert alert-danger">{error}</div></div>;
   if (!post || !options) return <div className="container py-5 text-secondary">Loading...</div>;
 
-  const reactionLabel = (type) => options.reactions.find((r) => r.type === type)?.label;
+  function reactionLabel(type) {
+    const reaction = options.reactions.find((r) => r.type === type);
+    return reaction ? reaction.label : type;
+  }
 
   return (
     <div className="container py-5" style={{ maxWidth: "48rem" }}>
@@ -120,7 +131,7 @@ export default function PostDetail() {
       </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
-      {showCrisis && <CrisisNotice onContinue={sendReply} />}
+      {showCrisis && <CrisisNotice onContinue={sendReply} continueLabel="Reply anyway" />}
 
       <form onSubmit={handleReply}>
         <label htmlFor="reply" className="form-label">Write a reply</label>

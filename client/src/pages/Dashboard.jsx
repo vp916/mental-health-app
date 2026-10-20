@@ -1,56 +1,72 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/axios.js";
+import api, { errorMessage } from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
 import MoodChart from "../components/MoodChart.jsx";
+import { dateString } from "../dates.js";
 
-function dateString(daysAgo) {
-  const date = new Date();
-  date.setDate(date.getDate() - daysAgo);
-  return date.toLocaleDateString("en-CA");
-}
-
+// How many days in a row the user has logged their mood, counting back from today.
+// If today isn't logged yet, the streak can still continue from yesterday.
 function countStreak(entries) {
-  const logged = entries.map((e) => e.entry_date);
-  let day = logged.includes(dateString(0)) ? 0 : 1;
+  const loggedDates = entries.map((e) => e.entry_date);
+
+  let daysAgo = loggedDates.includes(dateString(0)) ? 0 : 1;
   let streak = 0;
-  while (logged.includes(dateString(day))) {
+  while (loggedDates.includes(dateString(daysAgo))) {
     streak++;
-    day++;
+    daysAgo++;
   }
   return streak;
 }
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const options = useOptions();
+  const tests = options ? options.assessments : {};
   const [affirmation, setAffirmation] = useState(null);
   const [mood, setMood] = useState([]);
   const [journal, setJournal] = useState([]);
   const [checkins, setCheckins] = useState([]);
-  const [tests, setTests] = useState({});
   const [suggested, setSuggested] = useState([]);
   const [chats, setChats] = useState([]);
   const [saved, setSaved] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/affirmations/today").then(({ data }) => setAffirmation(data));
-    api.get("/mood?days=30").then(({ data }) => setMood(data));
-    api.get("/journal").then(({ data }) => setJournal(data.slice(0, 3)));
-    api.get("/assessments").then(({ data }) => setCheckins(data));
-    api.get("/options").then(({ data }) => setTests(data.assessments));
-    api.get("/helpers/suggested").then(({ data }) => setSuggested(data.helpers));
-    api.get("/chats").then(({ data }) => setChats(data.slice(0, 3)));
-    api.get("/bookmarks").then(({ data }) => setSaved(data.slice(0, 4)));
+    // Each panel loads on its own, so one failing request doesn't empty the whole page.
+    async function loadInto(url, save) {
+      try {
+        const { data } = await api.get(url);
+        save(data);
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+
+    loadInto("/affirmations/today", setAffirmation);
+    loadInto("/mood", setMood);
+    loadInto("/journal", (data) => setJournal(data.slice(0, 3)));
+    loadInto("/assessments", setCheckins);
+    loadInto("/helpers/suggested", (data) => setSuggested(data.helpers));
+    loadInto("/chats", (data) => setChats(data.slice(0, 3)));
+    loadInto("/bookmarks", (data) => setSaved(data.slice(0, 4)));
   }, []);
 
   const loggedToday = mood.some((e) => e.entry_date === dateString(0));
   const streak = countStreak(mood);
-  const latestCheckins = Object.keys(tests)
-    .map((type) => checkins.find((c) => c.type === type))
-    .filter(Boolean);
+
+  // The newest result of each check-in (results come newest first).
+  const latestCheckins = [];
+  for (const type of Object.keys(tests)) {
+    const latest = checkins.find((c) => c.type === type);
+    if (latest) latestCheckins.push(latest);
+  }
 
   return (
     <div className="container py-5">
+      {error && <div className="alert alert-danger">{error}</div>}
+
       <section className="cc-night mb-4">
         <h1 className="cc-greeting mb-2">Hi, {user.name.split(" ")[0]}</h1>
         {affirmation && <p className="cc-night-lead mb-0">{affirmation.text}</p>}

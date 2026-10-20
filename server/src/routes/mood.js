@@ -12,12 +12,11 @@ function isRating(value) {
 
 router.get("/", async (req, res, next) => {
   try {
-    const days = Number(req.query.days) || 30;
     const { rows } = await query(
       `SELECT * FROM mood_entries
-       WHERE user_id = $1 AND entry_date > CURRENT_DATE - $2::int
+       WHERE user_id = $1 AND entry_date > CURRENT_DATE - 30
        ORDER BY entry_date`,
-      [req.user.id, days]
+      [req.user.id]
     );
     res.json(rows);
   } catch (err) {
@@ -28,17 +27,21 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const { entry_date, mood, stress, energy, sleep_hours, note } = req.body;
+    if (!entry_date) {
+      return res.status(400).json({ message: "The date is missing." });
+    }
     if (!isRating(mood) || !isRating(stress) || !isRating(energy)) {
       return res.status(400).json({ message: "Rate mood, stress and energy from 1 to 5." });
     }
 
+    // One entry per day: if today already has one, ON CONFLICT updates it instead of adding another.
     const { rows } = await query(
       `INSERT INTO mood_entries (user_id, entry_date, mood, stress, energy, sleep_hours, note)
-       VALUES ($1, COALESCE($2::date, CURRENT_DATE), $3, $4, $5, $6, $7)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        ON CONFLICT (user_id, entry_date) DO UPDATE SET
          mood = $3, stress = $4, energy = $5, sleep_hours = $6, note = $7
        RETURNING *`,
-      [req.user.id, entry_date || null, mood, stress, energy, sleep_hours || null, note || null]
+      [req.user.id, entry_date, mood, stress, energy, sleep_hours || null, note || null]
     );
     res.status(201).json(rows[0]);
   } catch (err) {

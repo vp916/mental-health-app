@@ -4,6 +4,7 @@ import { Line } from "react-chartjs-2";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 export default function MoodChart({ entries }) {
+  // "T00:00" makes the browser read "2026-10-20" as local midnight, so the label shows the right day.
   const data = {
     labels: entries.map((e) => new Date(`${e.entry_date}T00:00`).toLocaleDateString(undefined, { day: "numeric", month: "short" })),
     datasets: [

@@ -24,8 +24,12 @@ export default function AdminReports() {
   }, []);
 
   async function resolve(id, hide) {
-    await api.patch(`/admin/reports/${id}`, { hide });
-    load();
+    try {
+      await api.patch(`/admin/reports/${id}`, { hide });
+      load();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   return (

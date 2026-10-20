@@ -11,32 +11,25 @@ const helperFields = `u.id, u.name, h.kind, h.bio, h.specialisations, h.language
 
 router.get("/", async (req, res, next) => {
   try {
-    const { specialisation, language, gender, free, available } = req.query;
-    const conditions = ["h.status = 'approved'"];
-    const params = [];
-
-    if (specialisation) {
-      params.push(specialisation);
-      conditions.push(`$${params.length} = ANY(h.specialisations)`);
-    }
-    if (language) {
-      params.push(language);
-      conditions.push(`$${params.length} = ANY(h.languages)`);
-    }
-    if (gender) {
-      params.push(gender);
-      conditions.push(`h.gender = $${params.length}`);
-    }
-    if (free === "true") conditions.push("h.is_free");
-    if (available === "true") conditions.push("h.is_available");
+    // Each filter is skipped when it is empty ("") or not ticked (false).
+    const specialisation = req.query.specialisation || "";
+    const language = req.query.language || "";
+    const gender = req.query.gender || "";
+    const freeOnly = req.query.free === "true";
+    const availableOnly = req.query.available === "true";
 
     const { rows } = await query(
       `SELECT ${helperFields}
        FROM helper_profiles h
        JOIN users u ON u.id = h.user_id
-       WHERE ${conditions.join(" AND ")}
+       WHERE h.status = 'approved'
+         AND ($1 = '' OR $1 = ANY(h.specialisations))
+         AND ($2 = '' OR $2 = ANY(h.languages))
+         AND ($3 = '' OR h.gender = $3)
+         AND ($4 = FALSE OR h.is_free)
+         AND ($5 = FALSE OR h.is_available)
        ORDER BY h.is_available DESC, u.name`,
-      params
+      [specialisation, language, gender, freeOnly, availableOnly]
     );
     res.json(rows);
   } catch (err) {
@@ -46,20 +39,28 @@ router.get("/", async (req, res, next) => {
 
 router.get("/suggested", async (req, res, next) => {
   try {
-    const { rows: latest } = await query(
-      `SELECT DISTINCT ON (type) type, level
-       FROM assessments
-       WHERE user_id = $1
-       ORDER BY type, taken_at DESC`,
+    const { rows: results } = await query(
+      "SELECT type, level FROM assessments WHERE user_id = $1 ORDER BY taken_at DESC",
       [req.user.id]
     );
 
-    const topics = latest
-      .filter((a) => ["Moderate", "High"].includes(a.level))
-      .map((a) => options.assessments[a.type].suggests);
+    // Results are newest first, so the first one we see for each check-in is the latest.
+    const latestLevel = {};
+    for (const r of results) {
+      if (!latestLevel[r.type]) latestLevel[r.type] = r.level;
+    }
+
+    // A Moderate or High result suggests helpers for that topic (Anxiety, Stress).
+    const topics = [];
+    for (const type in latestLevel) {
+      if (latestLevel[type] === "Moderate" || latestLevel[type] === "High") {
+        topics.push(options.assessments[type].suggests);
+      }
+    }
 
     if (topics.length === 0) return res.json({ topics: [], helpers: [] });
 
+    // && means "the two lists share at least one item".
     const { rows } = await query(
       `SELECT ${helperFields}
        FROM helper_profiles h

@@ -14,21 +14,17 @@ async function postIsVisible(id) {
 
 router.get("/", async (req, res, next) => {
   try {
-    const params = [];
-    let circleFilter = "";
-    if (req.query.circle) {
-      params.push(req.query.circle);
-      circleFilter = "AND p.circle = $1";
-    }
+    // An empty circle means "all circles".
+    const circle = req.query.circle || "";
 
     const { rows } = await query(
       `SELECT p.id, p.circle, p.title, LEFT(p.body, 220) AS preview, p.created_at, u.pen_name,
               (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id AND NOT c.is_hidden)::int AS comment_count
        FROM posts p
        JOIN users u ON u.id = p.user_id
-       WHERE NOT p.is_hidden ${circleFilter}
+       WHERE NOT p.is_hidden AND ($1 = '' OR p.circle = $1)
        ORDER BY p.created_at DESC`,
-      params
+      [circle]
     );
     res.json(rows);
   } catch (err) {
@@ -77,13 +73,25 @@ router.get("/:id", async (req, res, next) => {
     );
     const reactions = await query("SELECT user_id, type FROM reactions WHERE post_id = $1", [post.id]);
 
-    const { user_id, ...rest } = post;
+    const myReactions = [];
+    const receivedReactions = [];
+    for (const r of reactions.rows) {
+      if (r.user_id === req.user.id) myReactions.push(r.type);
+      if (!receivedReactions.includes(r.type)) receivedReactions.push(r.type);
+    }
+
     res.json({
-      ...rest,
-      is_mine: user_id === req.user.id,
+      id: post.id,
+      circle: post.circle,
+      title: post.title,
+      body: post.body,
+      created_at: post.created_at,
+      is_hidden: post.is_hidden,
+      pen_name: post.pen_name,
+      is_mine: post.user_id === req.user.id,   // send true/false, not the author's user id
       comments: comments.rows,
-      my_reactions: reactions.rows.filter((r) => r.user_id === req.user.id).map((r) => r.type),
-      received_reactions: [...new Set(reactions.rows.map((r) => r.type))],
+      my_reactions: myReactions,
+      received_reactions: receivedReactions,
     });
   } catch (err) {
     next(err);
@@ -92,11 +100,14 @@ router.get("/:id", async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
   try {
-    const { rowCount } = await query(
-      "DELETE FROM posts WHERE id = $1 AND (user_id = $2 OR $3)",
-      [req.params.id, req.user.id, req.user.role === "admin"]
-    );
-    if (!rowCount) return res.status(404).json({ message: "Post not found." });
+    // Admins can delete any post, everyone else only their own.
+    let result;
+    if (req.user.role === "admin") {
+      result = await query("DELETE FROM posts WHERE id = $1", [req.params.id]);
+    } else {
+      result = await query("DELETE FROM posts WHERE id = $1 AND user_id = $2", [req.params.id, req.user.id]);
+    }
+    if (result.rowCount === 0) return res.status(404).json({ message: "Post not found." });
     res.json({ message: "Post deleted." });
   } catch (err) {
     next(err);
@@ -133,6 +144,7 @@ router.post("/:id/reactions", async (req, res, next) => {
       return res.status(404).json({ message: "This post doesn't exist or was removed." });
     }
 
+    // Clicking a reaction again takes it back: try to delete it, and add it only if nothing was deleted.
     const removed = await query(
       "DELETE FROM reactions WHERE post_id = $1 AND user_id = $2 AND type = $3",
       [req.params.id, req.user.id, type]

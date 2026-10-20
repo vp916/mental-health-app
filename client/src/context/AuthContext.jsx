@@ -9,7 +9,7 @@ function readSavedUser() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(readSavedUser);
+  const [user, setUser] = useState(readSavedUser());
 
   useEffect(() => {
     if (!localStorage.getItem("token")) return;

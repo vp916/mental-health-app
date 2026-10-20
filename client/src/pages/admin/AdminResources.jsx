@@ -1,23 +1,28 @@
 import { useEffect, useState } from "react";
 import api, { errorMessage } from "../../api/axios.js";
 import AdminNav from "../../components/AdminNav.jsx";
+import { useOptions } from "../../context/OptionsContext.jsx";
 
 const emptyForm = { title: "", type: "article", category: "", url: "", body: "" };
 
 export default function AdminResources() {
-  const [categories, setCategories] = useState([]);
+  const options = useOptions();
+  const categories = options ? options.resourceCategories : [];
   const [resources, setResources] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
 
   async function load() {
-    const { data } = await api.get("/resources");
-    setResources(data);
+    try {
+      const { data } = await api.get("/resources");
+      setResources(data);
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   useEffect(() => {
-    api.get("/options").then(({ data }) => setCategories(data.resourceCategories));
     load();
   }, []);
 
@@ -50,8 +55,12 @@ export default function AdminResources() {
   }
 
   async function remove(id) {
-    await api.delete(`/resources/${id}`);
-    load();
+    try {
+      await api.delete(`/resources/${id}`);
+      load();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   return (

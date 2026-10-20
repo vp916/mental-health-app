@@ -1,28 +1,38 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
+import { useOptions } from "../context/OptionsContext.jsx";
 
 export default function JournalEditor() {
   const { id } = useParams();
   const isNew = !id;
   const navigate = useNavigate();
-  const [emotions, setEmotions] = useState([]);
+  const options = useOptions();
+  const emotions = options ? options.emotions : [];
   const [form, setForm] = useState({ title: "", body: "", emotion: "" });
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/options").then(({ data }) => setEmotions(data.emotions));
-    if (!isNew) {
-      api
-        .get(`/journal/${id}`)
-        .then(({ data }) => setForm({ title: data.title, body: data.body, emotion: data.emotion || "" }))
-        .catch((err) => setError(errorMessage(err)));
+    async function loadEntry() {
+      try {
+        const { data } = await api.get(`/journal/${id}`);
+        setForm({ title: data.title, body: data.body, emotion: data.emotion || "" });
+      } catch (err) {
+        setError(errorMessage(err));
+      }
     }
+    if (!isNew) loadEntry();
   }, [id]);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  // Clicking the chosen emotion again clears it.
+  function chooseEmotion(emotion) {
+    if (form.emotion === emotion) setForm({ ...form, emotion: "" });
+    else setForm({ ...form, emotion: emotion });
   }
 
   async function handleSubmit(e) {
@@ -38,8 +48,12 @@ export default function JournalEditor() {
   }
 
   async function deleteEntry() {
-    await api.delete(`/journal/${id}`);
-    navigate("/journal");
+    try {
+      await api.delete(`/journal/${id}`);
+      navigate("/journal");
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   return (
@@ -59,7 +73,7 @@ export default function JournalEditor() {
           <div className="form-label">How are you feeling?</div>
           <div className="d-flex flex-wrap gap-2">
             {emotions.map((em) => (
-              <button type="button" key={em} onClick={() => setForm({ ...form, emotion: form.emotion === em ? "" : em })}
+              <button type="button" key={em} onClick={() => chooseEmotion(em)}
                 className={`btn btn-sm ${form.emotion === em ? "btn-primary" : "btn-outline-primary"}`}>
                 {em}
               </button>

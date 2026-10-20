@@ -7,10 +7,15 @@ export default function AdminUsers() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api
-      .get("/admin/users")
-      .then(({ data }) => setUsers(data))
-      .catch((err) => setError(errorMessage(err)));
+    async function load() {
+      try {
+        const { data } = await api.get("/admin/users");
+        setUsers(data);
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+    load();
   }, []);
 
   return (

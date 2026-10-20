@@ -12,20 +12,30 @@ export default function Chats() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api
-      .get("/chats")
-      .then(({ data }) => setChats(data))
-      .catch((err) => setError(errorMessage(err)))
-      .finally(() => setLoading(false));
-
-    if (user.role === "helper") {
-      api.get("/helpers/me").then(({ data }) => setAvailable(data.is_available));
+    async function load() {
+      try {
+        const { data } = await api.get("/chats");
+        setChats(data);
+        if (user.role === "helper") {
+          const helper = await api.get("/helpers/me");
+          setAvailable(helper.data.is_available);
+        }
+      } catch (err) {
+        setError(errorMessage(err));
+      } finally {
+        setLoading(false);
+      }
     }
+    load();
   }, [user.role]);
 
   async function toggleAvailable() {
-    const { data } = await api.patch("/helpers/me/availability", { is_available: !available });
-    setAvailable(data.is_available);
+    try {
+      const { data } = await api.patch("/helpers/me/availability", { is_available: !available });
+      setAvailable(data.is_available);
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   return (

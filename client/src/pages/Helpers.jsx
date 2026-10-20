@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import HelperCard from "../components/HelperCard.jsx";
 import PageHeader from "../components/PageHeader.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
 
 const emptyFilters = { specialisation: "", language: "", gender: "", free: false, available: false };
 
 export default function Helpers() {
-  const [options, setOptions] = useState(null);
+  const options = useOptions();
   const [filters, setFilters] = useState(emptyFilters);
   const [helpers, setHelpers] = useState([]);
   const [suggested, setSuggested] = useState(null);
@@ -15,8 +16,15 @@ export default function Helpers() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/options").then(({ data }) => setOptions(data));
-    api.get("/helpers/suggested").then(({ data }) => setSuggested(data));
+    async function loadSuggested() {
+      try {
+        const { data } = await api.get("/helpers/suggested");
+        setSuggested(data);
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+    loadSuggested();
   }, []);
 
   useEffect(() => {

@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
+import { useOptions } from "../context/OptionsContext.jsx";
 
 export default function AssessmentTake() {
   const { type } = useParams();
-  const [test, setTest] = useState(null);
+  const options = useOptions();
+  const test = options ? options.assessments[type] : null;
   const [answers, setAnswers] = useState([]);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
+  // Start with no answer (null) for every question.
   useEffect(() => {
-    api.get("/options").then(({ data }) => {
-      setTest(data.assessments[type]);
-      setAnswers(data.assessments[type]?.questions.map(() => null) || []);
-    });
-  }, [type]);
+    if (test) setAnswers(new Array(test.questions.length).fill(null));
+  }, [test]);
 
   function choose(questionIndex, choiceIndex) {
     const updated = [...answers];
@@ -34,7 +34,10 @@ export default function AssessmentTake() {
     }
   }
 
-  if (!test) return <div className="container py-5 text-secondary">Loading...</div>;
+  if (!options) return <div className="container py-5 text-secondary">Loading...</div>;
+  if (!test) return <div className="container py-5"><div className="alert alert-danger">This check-in doesn't exist.</div></div>;
+
+  const allAnswered = answers.length === test.questions.length && !answers.includes(null);
 
   if (result) {
     return (
@@ -87,7 +90,7 @@ export default function AssessmentTake() {
         ))}
 
         {error && <div className="alert alert-danger">{error}</div>}
-        <button type="submit" className="btn btn-primary" disabled={answers.includes(null)}>
+        <button type="submit" className="btn btn-primary" disabled={!allAnswered}>
           See my result
         </button>
       </form>

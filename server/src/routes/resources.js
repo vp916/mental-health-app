@@ -12,29 +12,23 @@ function checkResource(data) {
   if (!title?.trim() || !types.includes(type) || !options.resourceCategories.includes(category)) {
     return "Give a title, a type and a category.";
   }
-  if (type === "article" ? !body?.trim() : !url?.trim()) {
-    return type === "article" ? "Write the article text." : "Add the link.";
-  }
+  if (type === "article" && !body?.trim()) return "Write the article text.";
+  if (type !== "article" && !url?.trim()) return "Add the link.";
   return null;
 }
 
 router.get("/", async (req, res, next) => {
   try {
-    const { category, type } = req.query;
-    const conditions = [];
-    const params = [];
+    // An empty filter means "show all".
+    const category = req.query.category || "";
+    const type = req.query.type || "";
 
-    if (category) {
-      params.push(category);
-      conditions.push(`category = $${params.length}`);
-    }
-    if (type) {
-      params.push(type);
-      conditions.push(`type = $${params.length}`);
-    }
-
-    const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
-    const { rows } = await query(`SELECT * FROM resources ${where} ORDER BY created_at DESC`, params);
+    const { rows } = await query(
+      `SELECT * FROM resources
+       WHERE ($1 = '' OR category = $1) AND ($2 = '' OR type = $2)
+       ORDER BY created_at DESC`,
+      [category, type]
+    );
     res.json(rows);
   } catch (err) {
     next(err);

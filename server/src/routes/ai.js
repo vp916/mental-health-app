@@ -38,6 +38,8 @@ router.post("/chat", requireAuth, async (req, res, next) => {
       }
     );
 
+    // Gemini answers { candidates: [ { content: { parts: [ { text } ] } } ] }.
+    // ?. stops safely if any part is missing (for example when the request was blocked).
     const data = await response.json();
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!response.ok || !reply) {

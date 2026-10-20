@@ -1,20 +1,31 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/axios.js";
+import api, { errorMessage } from "../api/axios.js";
 import PageHeader from "../components/PageHeader.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
 
 export default function Assessments() {
-  const [tests, setTests] = useState({});
+  const options = useOptions();
+  const tests = options ? options.assessments : {};
   const [history, setHistory] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/options").then(({ data }) => setTests(data.assessments));
-    api.get("/assessments").then(({ data }) => setHistory(data));
+    async function load() {
+      try {
+        const { data } = await api.get("/assessments");
+        setHistory(data);
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+    load();
   }, []);
 
   return (
     <div className="container py-5" style={{ maxWidth: "48rem" }}>
       <PageHeader title="Check-ins" text="Short, well-known questionnaires that show how you're doing right now. They are not a diagnosis." />
+      {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="row g-3 mb-5">
         {Object.entries(tests).map(([type, test]) => (

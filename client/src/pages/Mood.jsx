@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import api, { errorMessage } from "../api/axios.js";
 import MoodChart from "../components/MoodChart.jsx";
 import PageHeader from "../components/PageHeader.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
+import { dateString } from "../dates.js";
 
-const today = new Date().toLocaleDateString("en-CA");
 const emptyForm = { mood: null, stress: null, energy: null, sleep_hours: "", note: "" };
 
 function RatingRow({ label, name, value, labels, onChange }) {
@@ -26,23 +27,35 @@ function RatingRow({ label, name, value, labels, onChange }) {
 }
 
 export default function Mood() {
-  const [moodLabels, setMoodLabels] = useState(null);
+  const options = useOptions();
+  const moodLabels = options ? options.moodLabels : null;
   const [entries, setEntries] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   async function load() {
-    const { data } = await api.get("/mood?days=30");
-    setEntries(data);
-    const todays = data.find((e) => e.entry_date === today);
-    if (todays) {
-      setForm({ ...todays, sleep_hours: todays.sleep_hours ?? "", note: todays.note ?? "" });
+    try {
+      const { data } = await api.get("/mood");
+      setEntries(data);
+
+      // If today already has an entry, fill the form with it so it can be updated.
+      const todays = data.find((e) => e.entry_date === dateString());
+      if (todays) {
+        setForm({
+          mood: todays.mood,
+          stress: todays.stress,
+          energy: todays.energy,
+          sleep_hours: todays.sleep_hours || "",
+          note: todays.note || "",
+        });
+      }
+    } catch (err) {
+      setError(errorMessage(err));
     }
   }
 
   useEffect(() => {
-    api.get("/options").then(({ data }) => setMoodLabels(data.moodLabels));
     load();
   }, []);
 
@@ -55,7 +68,7 @@ export default function Mood() {
     setMessage("");
     setError("");
     try {
-      await api.post("/mood", { ...form, entry_date: today });
+      await api.post("/mood", { ...form, entry_date: dateString() });
       setMessage("Saved. You can update today's entry any time.");
       load();
     } catch (err) {

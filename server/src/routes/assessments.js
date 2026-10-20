@@ -23,17 +23,30 @@ router.post("/", async (req, res, next) => {
   try {
     const { type, answers } = req.body;
     const test = options.assessments[type];
-    const maxAnswer = test ? test.choices.length - 1 : 0;
-
-    if (!test || answers?.length !== test.questions.length || answers.some((a) => !(a >= 0 && a <= maxAnswer))) {
+    if (!test) {
+      return res.status(400).json({ message: "Unknown check-in." });
+    }
+    if (!Array.isArray(answers) || answers.length !== test.questions.length) {
       return res.status(400).json({ message: "Please answer every question." });
     }
 
+    // Answers are choice numbers: 0 = first choice ... maxAnswer = last choice.
+    const maxAnswer = test.choices.length - 1;
+    for (const answer of answers) {
+      if (!Number.isInteger(answer) || answer < 0 || answer > maxAnswer) {
+        return res.status(400).json({ message: "Please answer every question." });
+      }
+    }
+
+    // Some PSS-10 questions are positive ("felt confident..."), so their scale is flipped.
     let score = 0;
-    answers.forEach((answer, i) => {
-      score += test.reversed.includes(i) ? maxAnswer - answer : answer;
-    });
-    const result = test.levels.find((l) => score <= l.max);
+    for (let i = 0; i < answers.length; i++) {
+      if (test.reversed.includes(i)) score += maxAnswer - answers[i];
+      else score += answers[i];
+    }
+
+    // levels are sorted by max, so the first level whose max is at least the score is the result.
+    const result = test.levels.find((level) => score <= level.max);
 
     const { rows } = await query(
       "INSERT INTO assessments (user_id, type, score, level) VALUES ($1, $2, $3, $4) RETURNING *",

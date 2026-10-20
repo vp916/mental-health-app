@@ -2,17 +2,15 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { errorMessage } from "../api/axios.js";
 import PageHeader from "../components/PageHeader.jsx";
+import { useOptions } from "../context/OptionsContext.jsx";
 
 export default function Community() {
-  const [circles, setCircles] = useState([]);
+  const options = useOptions();
+  const circles = options ? options.circles : [];
   const [circle, setCircle] = useState("");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    api.get("/options").then(({ data }) => setCircles(data.circles));
-  }, []);
 
   useEffect(() => {
     async function load() {

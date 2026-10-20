@@ -1,15 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../../api/axios.js";
+import api, { errorMessage } from "../../api/axios.js";
 import AdminNav from "../../components/AdminNav.jsx";
 
 export default function AdminHome() {
   const [stats, setStats] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/admin/stats").then(({ data }) => setStats(data));
+    async function load() {
+      try {
+        const { data } = await api.get("/admin/stats");
+        setStats(data);
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+    load();
   }, []);
 
+  if (error) return <div className="container py-5"><div className="alert alert-danger">{error}</div></div>;
   if (!stats) return <div className="container py-5 text-secondary">Loading...</div>;
 
   const rows = [

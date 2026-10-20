@@ -19,8 +19,15 @@ export default function Profile() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (user.role === "admin") return;
-    api.get("/helpers/me").then(({ data }) => setApplication(data));
+    async function loadApplication() {
+      try {
+        const { data } = await api.get("/helpers/me");
+        setApplication(data);
+      } catch (err) {
+        setError(errorMessage(err));
+      }
+    }
+    if (user.role !== "admin") loadApplication();
   }, [user.role]);
 
   function handleChange(e) {

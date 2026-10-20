@@ -44,8 +44,8 @@ export default function AdminHelpers() {
       <div className="d-flex gap-2 mb-4">
         {tabs.map((t) => (
           <button key={t} onClick={() => setStatus(t)}
-            className={`btn btn-sm ${t === status ? "btn-primary" : "btn-outline-primary"}`}>
-            {t[0].toUpperCase() + t.slice(1)}
+            className={`btn btn-sm text-capitalize ${t === status ? "btn-primary" : "btn-outline-primary"}`}>
+            {t}
           </button>
         ))}
       </div>
