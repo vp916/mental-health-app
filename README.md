@@ -15,7 +15,6 @@ You need **Node.js 20+** and a free **Neon** database ([neon.tech](https://neon.
    cd server
    npm install
    cp .env.example .env      # paste the string as DATABASE_URL, set JWT_SECRET
-   npm run db:setup          # creates all tables, sample data and the admin account
    npm run dev               # http://localhost:5000
    ```
 
@@ -29,13 +28,11 @@ You need **Node.js 20+** and a free **Neon** database ([neon.tech](https://neon.
 
 Admin login: `ADMIN_EMAIL` / `ADMIN_PASSWORD` from `.env` (default `admin@calmconnect.local` / `admin123`).
 
-`npm run db:setup` deletes all data and starts fresh. Run it again whenever `schema.sql` changes.
-
 ### Demo data
 
 ```bash
 cd server
-npm run db:setup && npm run db:demo
+npm run db:demo
 ```
 
 | Account | Password | Role |
@@ -49,6 +46,10 @@ npm run db:setup && npm run db:demo
 ### AI assistant
 
 Get a free key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and put it in `server/.env` as `GEMINI_API_KEY`. Without a key the rest of the app works and the assistant page explains that it isn't set up.
+
+### Forgot password emails
+
+To send reset links by email, put a Gmail address and an [app password](https://myaccount.google.com/apppasswords) in `server/.env` as `EMAIL_USER` and `EMAIL_PASS`. Without them, the reset link is printed in the server terminal.
 
 ## Project layout
 
@@ -77,7 +78,7 @@ server/
 |---|---|
 | Circles, reactions, crisis words, check-in questions, specialisations, languages, emotions | `server/src/options.js` |
 | Words used for pen names | `penNameWords` in `server/src/options.js` |
-| A table or column | `server/sql/schema.sql`, then `npm run db:setup` |
+| A table or column | `server/sql/schema.sql` |
 | Starter resources and affirmations | `server/sql/seed.sql` |
 | Demo accounts and activity | `server/sql/demo.js` |
 | What the AI assistant is told | `aiInstructions` in `server/src/options.js` |
