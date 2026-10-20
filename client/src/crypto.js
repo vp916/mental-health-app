@@ -86,7 +86,12 @@ export async function encryptMessage(key, text) {
   return { ciphertext: toBase64(data), iv: toBase64(iv) };
 }
 
+// Messages sent before a password reset used the old key, so they can't be unlocked.
 export async function decryptMessage(key, message) {
-  const plain = await subtle.decrypt({ name: "AES-GCM", iv: fromBase64(message.iv) }, key, fromBase64(message.ciphertext));
-  return new TextDecoder().decode(plain);
+  try {
+    const plain = await subtle.decrypt({ name: "AES-GCM", iv: fromBase64(message.iv) }, key, fromBase64(message.ciphertext));
+    return new TextDecoder().decode(plain);
+  } catch {
+    return "This message can't be read. It was sent before a password reset.";
+  }
 }
