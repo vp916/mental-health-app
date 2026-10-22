@@ -14,6 +14,8 @@ function checkResource(data) {
   }
   if (type === "article" && !body?.trim()) return "Write the article text.";
   if (type !== "article" && !url?.trim()) return "Add the link.";
+  // Only real web links, so a "javascript:" URL can't run code when someone clicks it.
+  if (type !== "article" && !/^https?:\/\//i.test(url.trim())) return "Links must start with http:// or https://.";
   return null;
 }
 
