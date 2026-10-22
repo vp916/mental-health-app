@@ -98,22 +98,24 @@ export default function Resources() {
         <p className="text-secondary">{showSaved ? "You haven't saved anything yet." : "Nothing in this category yet."}</p>
       )}
 
-      <div className="d-grid gap-3" style={{ maxWidth: "46rem" }}>
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
         {shown.map((r) => (
-          <article className="cc-panel" key={r.id}>
-            <div className="d-flex justify-content-between gap-2 mb-1">
-              <div className="small text-secondary text-capitalize">{r.type} · {r.category}</div>
-              {user && (
-                <button className="btn btn-link btn-sm p-0" onClick={() => toggleSaved(r.id)}>
-                  {savedIds.includes(r.id) ? "Saved" : "Save"}
-                </button>
-              )}
-            </div>
-            <h2 className="h5 mb-2">
-              {r.url ? <a href={r.url} target="_blank" rel="noreferrer">{r.title}</a> : r.title}
-            </h2>
-            {r.body && <p className="mb-0">{r.body}</p>}
-          </article>
+          <div className="col" key={r.id}>
+            <article className="cc-panel h-100">
+              <div className="d-flex justify-content-between gap-2 mb-1">
+                <div className="small text-secondary text-capitalize">{r.type} · {r.category}</div>
+                {user && (
+                  <button className="btn btn-link btn-sm p-0" onClick={() => toggleSaved(r.id)}>
+                    {savedIds.includes(r.id) ? "Saved" : "Save"}
+                  </button>
+                )}
+              </div>
+              <h2 className="h5 mb-2">
+                {r.url ? <a href={r.url} target="_blank" rel="noreferrer">{r.title}</a> : r.title}
+              </h2>
+              {r.body && <p className="mb-0">{r.body}</p>}
+            </article>
+          </div>
         ))}
       </div>
     </div>
